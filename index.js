@@ -16,15 +16,10 @@ pick_targets.onchange = e =>
 }
 
 var swatches = document.getElementById("swatches");
-add_swatch(swatches, "#FF0000");
-add_swatch(swatches, "#00FF00");
-add_swatch(swatches, "#0000FF");
-
-var color = {L:40,a:2,b:30};
-color = lab_to_xyz(color);
-color = xyz_to_rgb(color);
-color = rgb_to_hex(color);
-add_swatch(swatches, color);s
+add_swatch(swatches, new Color(33,5,6.5));
+add_swatch(swatches, new Color(53.6,-1.3,1.5));
+add_swatch(swatches, new Color(47.8,7.6,16.8));
+add_swatch(swatches, new Color(40,2,30));
 
 }
 
@@ -34,7 +29,7 @@ function add_swatch(parent, color)
     swatch.classList.add("swatch");
     const ctx = swatch.getContext("2d");
 
-    ctx.fillStyle = color;
+    ctx.fillStyle = color.hex;
     ctx.fillRect(0,0,swatch.width,swatch.height);
 
     parent.appendChild(swatch);
@@ -111,4 +106,23 @@ function rgb_to_hex(color)
         return ("0"+val.toString(16)).slice(-2);
     }
     return "#"+to_hex(r)+to_hex(g)+to_hex(b);
+}
+
+class Color
+{
+    constructor(L,a,b)
+    {
+        this.L = L;
+        this.a = a;
+        this.b = b;
+        var xyz = lab_to_xyz(this);
+        this.x = xyz.x;
+        this.y = xyz.y;
+        this.z = xyz.z;
+        var rgb = xyz_to_rgb(this);
+        this.r = rgb.r;
+        this.g = rgb.g;
+        this.b = rgb.b;
+        this.hex = rgb_to_hex(this);
+    }
 }
