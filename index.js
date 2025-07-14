@@ -1,8 +1,12 @@
 window.onload = e =>{
 
 var pick_colors = document.getElementById("pick-colors");
-var contents = document.getElementById("file-contents");
-var swatches = document.getElementById("swatches");
+var target_select = document.getElementById("target-select");
+var target_swatch = document.getElementById("target-swatch");
+var comp_swatches = document.getElementById("comp-swatches");
+
+colors = {};
+components = {};
 
 pick_colors.onchange = e =>
 {
@@ -11,14 +15,40 @@ pick_colors.onchange = e =>
     reader.readAsText(file,'UTF-8');
     reader.onload = readerEvent =>
     {
+        colors = {};
+        components = {};
+        target_select.innerHTML = "";
         //contents.innerHTML = readerEvent.target.result;
         var obj = JSON.parse(readerEvent.target.result);
-        var targets = obj.targets;
-        for(color in targets)
+        for(color in obj.colors)
         {
-            color = targets[color];
-            add_swatch(swatches, new Color(color.L,color.a,color.b));
+            color = obj.colors[color];
+            colors[color.id] = new Color(color.name,color.L,color.a,color.b);
         }
+        for(target in obj.targets)
+        {
+            target = obj.targets[target];
+            components[target.id] = target.components;
+            color = colors[target.id];
+            var opt = document.createElement("option");
+            opt.value = target.id;
+            opt.innerHTML = color.name;
+            target_select.appendChild(opt);
+        }
+    }
+}
+
+target_select.onchange = e =>
+{
+    target = target_select.value;
+
+    target_swatch.innerHTML = "";
+    comp_swatches.innerHTML = "";
+
+    add_swatch(target_swatch, colors[target]);
+    for(component in components[target])
+    {
+        add_swatch(comp_swatches,colors[components[target][component]]);
     }
 }
 
@@ -111,8 +141,9 @@ function rgb_to_hex(color)
 
 class Color
 {
-    constructor(L,a,b)
+    constructor(name,L,a,b)
     {
+        this.name = name;
         this.L = L;
         this.a = a;
         this.b = b;

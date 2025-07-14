@@ -1,9 +1,14 @@
 {
+    "colors":
+    [
+        {"id":0,"name":"Color 1","L":33,"a":5,"b":6.5},
+        {"id":1,"name":"Color 2","L":53.6,"a":-1.3,"b":1.5},
+        {"id":2,"name":"Color 3","L":47.8,"a":7.6,"b":16.8},
+        {"id":3,"name":"Color 4","L":40,"a":2,"b":30}
+    ],
     "targets":
     [
-        {"name":"Color 1","L":33,"a":5,"b":6.5},
-        {"name":"Color 2","L":53.6,"a":-1.3,"b":1.5},
-        {"name":"Color 3","L":47.8,"a":7.6,"b":16.8},
-        {"name":"Color 4","L":40,"a":2,"b":30}
+        {"id":0,"components":[2,3]},
+        {"id":1,"components":[3,2]}
     ]
 }
