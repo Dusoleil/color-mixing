@@ -1,25 +1,26 @@
 window.onload = e =>{
 
-var pick_targets = document.getElementById("pick-targets");
-var pick_components = document.getElementById("pick-components");
+var pick_colors = document.getElementById("pick-colors");
 var contents = document.getElementById("file-contents");
+var swatches = document.getElementById("swatches");
 
-pick_targets.onchange = e =>
+pick_colors.onchange = e =>
 {
     var file = e.target.files[0];
     var reader = new FileReader();
     reader.readAsText(file,'UTF-8');
     reader.onload = readerEvent =>
     {
-        contents.innerHTML = readerEvent.target.result;
+        //contents.innerHTML = readerEvent.target.result;
+        var obj = JSON.parse(readerEvent.target.result);
+        var targets = obj.targets;
+        for(color in targets)
+        {
+            color = targets[color];
+            add_swatch(swatches, new Color(color.L,color.a,color.b));
+        }
     }
 }
-
-var swatches = document.getElementById("swatches");
-add_swatch(swatches, new Color(33,5,6.5));
-add_swatch(swatches, new Color(53.6,-1.3,1.5));
-add_swatch(swatches, new Color(47.8,7.6,16.8));
-add_swatch(swatches, new Color(40,2,30));
 
 }
 
