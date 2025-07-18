@@ -23,14 +23,12 @@ pick_colors.onchange = e =>
         target_select.innerHTML = "";
         //contents.innerHTML = readerEvent.target.result;
         let obj = JSON.parse(readerEvent.target.result);
-        for(let color in obj.colors)
+        for(let color of obj.colors)
         {
-            color = obj.colors[color];
             colors[color.id] = new Color(color.name,color.L,color.a,color.b);
         }
-        for(let target in obj.targets)
+        for(let target of obj.targets)
         {
-            target = obj.targets[target];
             components[target.id] = target.components;
             let color = colors[target.id];
             let opt = document.createElement("option");
@@ -51,9 +49,9 @@ target_select.onchange = e =>
     comp_swatches.innerHTML = "";
 
     add_swatch(target_swatch, colors[target]);
-    for(let component in components[target])
+    for(let component of components[target])
     {
-        add_swatch(comp_swatches,colors[components[target][component]]);
+        add_swatch(comp_swatches,colors[component]);
     }
     current_input.dispatchEvent(new Event('change'))
 }
@@ -61,9 +59,9 @@ target_select.onchange = e =>
 input_deltas.onchange = e =>
 {
     var deltas = document.querySelectorAll(".delta");
-    for(let delta in deltas)
+    for(let delta of deltas)
     {
-        deltas[delta].style.visibility = e.target.checked ? "visible" : "hidden";
+        delta.style.visibility = e.target.checked ? "visible" : "hidden";
     }
 }
 
