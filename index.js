@@ -2,6 +2,7 @@ window.onload = e =>{
 
 var pick_colors = document.getElementById("pick-colors");
 var target_select = document.getElementById("target-select");
+var input_deltas = document.getElementById("input-deltas");
 var current_input = document.getElementById("current-input");
 var current_swatch = document.getElementById("current-swatch");
 var target_swatch = document.getElementById("target-swatch");
@@ -54,13 +55,27 @@ target_select.onchange = e =>
     {
         add_swatch(comp_swatches,colors[components[target][component]]);
     }
+    current_input.dispatchEvent(new Event('change'))
+}
+
+input_deltas.onchange = e =>
+{
+    var deltas = document.querySelectorAll(".delta");
+    for(let delta in deltas)
+    {
+        deltas[delta].style.visibility = e.target.checked ? "visible" : "hidden";
+    }
 }
 
 current_input.onchange = e =>
 {
-    if(target_select.value === '') return;
     current_swatch.innerHTML = "";
-    var target = colors[target_select.value];
+    var target = new Color("0",0,0,0);
+    if(input_deltas.checked)
+    {
+        if(target_select.value === '') return;
+        target = colors[target_select.value];
+    }
     var dL = Number(current_input.querySelector("#current-L").value);
     var da = Number(current_input.querySelector("#current-a").value);
     var db = Number(current_input.querySelector("#current-b").value);
