@@ -5,8 +5,8 @@ var target_select = document.getElementById("target-select");
 var target_swatch = document.getElementById("target-swatch");
 var comp_swatches = document.getElementById("comp-swatches");
 
-colors = {};
-components = {};
+var colors = {};
+var components = {};
 
 pick_colors.onchange = e =>
 {
@@ -19,18 +19,18 @@ pick_colors.onchange = e =>
         components = {};
         target_select.innerHTML = "";
         //contents.innerHTML = readerEvent.target.result;
-        var obj = JSON.parse(readerEvent.target.result);
-        for(color in obj.colors)
+        let obj = JSON.parse(readerEvent.target.result);
+        for(let color in obj.colors)
         {
             color = obj.colors[color];
             colors[color.id] = new Color(color.name,color.L,color.a,color.b);
         }
-        for(target in obj.targets)
+        for(let target in obj.targets)
         {
             target = obj.targets[target];
             components[target.id] = target.components;
-            color = colors[target.id];
-            var opt = document.createElement("option");
+            let color = colors[target.id];
+            let opt = document.createElement("option");
             opt.value = target.id;
             opt.innerHTML = color.name;
             target_select.appendChild(opt);
@@ -40,13 +40,13 @@ pick_colors.onchange = e =>
 
 target_select.onchange = e =>
 {
-    target = target_select.value;
+    var target = target_select.value;
 
     target_swatch.innerHTML = "";
     comp_swatches.innerHTML = "";
 
     add_swatch(target_swatch, colors[target]);
-    for(component in components[target])
+    for(let component in components[target])
     {
         add_swatch(comp_swatches,colors[components[target][component]]);
     }
