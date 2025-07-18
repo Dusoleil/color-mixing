@@ -12,10 +12,12 @@
             <label for="pick-colors">Colors File</label>
             <input type="file" id="pick-colors" accept=".json" \>
         </div>
-        <div>
+        <form id="target-form">
             <label for="target-select">Target Color</label>
             <select id="target-select"></select>
-        </div>
+            <label for="use-linear">Use Linear Space</label>
+            <input type="checkbox" id="use-linear" checked \>
+        </form>
         <form id="current-input">
             <label for="input-deltas">Use Deltas</label>
             <input type="checkbox" id="input-deltas" checked \>

@@ -1,6 +1,7 @@
 window.onload = e =>{
 
 var pick_colors = document.getElementById("pick-colors");
+var target_form = document.getElementById("target-form");
 var target_select = document.getElementById("target-select");
 var input_deltas = document.getElementById("input-deltas");
 var current_input = document.getElementById("current-input");
@@ -37,7 +38,7 @@ pick_colors.onchange = e =>
             target_select.appendChild(opt);
         }
         target_select.selectedIndex = "0";
-        target_select.dispatchEvent(new Event('change'))
+        target_form.dispatchEvent(new Event('change'))
     }
 }
 
@@ -55,15 +56,16 @@ function update_component_swatches(current)
     }
 }
 
-target_select.onchange = e =>
+target_form.onchange = e =>
 {
     target_swatch.innerHTML = "";
 
     var target = target_select.value;
-    if(target === '') return;
-
-    add_swatch_info(target_swatch, colors[target]);
-    add_swatch(target_swatch, colors[target]);
+    if(target !== '')
+    {
+        add_swatch_info(target_swatch, colors[target]);
+        add_swatch(target_swatch, colors[target]);
+    }
 
     current_input.dispatchEvent(new Event('change'))
 }
@@ -106,6 +108,7 @@ current_input.onchange = e =>
 
 function add_swatch_info(parent, color, target=null, current=null)
 {
+    var use_linear = document.getElementById("use-linear");
     var div = document.createElement("div");
     parent.appendChild(div);
     var table = document.createElement("table");
@@ -116,19 +119,19 @@ function add_swatch_info(parent, color, target=null, current=null)
     var namecell = namerow.insertCell();
     namecell.setAttribute("colspan", 3);
     namecell.innerHTML = color.name;
-    var x = color.L;
-    var y = color.a;
-    var z = color.b
+    var x = use_linear.checked ? color.X : color.L;
+    var y = use_linear.checked ? color.Y : color.a;
+    var z = use_linear.checked ? color.Z : color.b
     var labrow = table.insertRow();
-    labrow.insertCell().innerHTML = "Lab:";
+    labrow.insertCell().innerHTML = use_linear.checked ? "XYZ:" : "Lab:";
     labrow.insertCell().innerHTML = x.toFixed(2);
     labrow.insertCell().innerHTML = y.toFixed(2);
     labrow.insertCell().innerHTML = z.toFixed(2);
     if(target != null)
     {
-        x -= target.L;
-        y -= target.a;
-        z -= target.b;
+        x -= use_linear.checked ? target.X : target.L;
+        y -= use_linear.checked ? target.Y : target.a;
+        z -= use_linear.checked ? target.Z : target.b;
         var diffrow = table.insertRow();
         diffrow.insertCell().innerHTML = "&Delta;:";
         diffrow.insertCell().innerHTML = x.toFixed(2);
@@ -144,9 +147,9 @@ function add_swatch_info(parent, color, target=null, current=null)
 
         if(current != null)
         {
-            x = current.L - target.L;
-            y = current.a - target.a;
-            z = current.b - target.b;
+            x = use_linear.checked ? current.X - target.X : current.L - target.L;
+            y = use_linear.checked ? current.Y - target.Y : current.a - target.a;
+            z = use_linear.checked ? current.Z - target.Z : current.b - target.b;
             var curunit = unit_vector(x,y,z);
             if(vector_length(curunit.x,curunit.y,curunit.z) == 0 || vector_length(unit.x,unit.y,unit.z) == 0) return;
             var thetarow = table.insertRow();
