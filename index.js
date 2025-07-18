@@ -35,6 +35,8 @@ pick_colors.onchange = e =>
             opt.innerHTML = color.name;
             target_select.appendChild(opt);
         }
+        target_select.selectedIndex = "0";
+        target_select.dispatchEvent(new Event('change'))
     }
 }
 

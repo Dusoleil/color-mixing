@@ -9,6 +9,6 @@
     "targets":
     [
         {"id":0,"components":[2,3]},
-        {"id":1,"components":[3,2]}
+        {"id":2,"components":[3,1]}
     ]
 }
