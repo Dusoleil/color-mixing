@@ -2,6 +2,8 @@ window.onload = e =>{
 
 var pick_colors = document.getElementById("pick-colors");
 var target_select = document.getElementById("target-select");
+var current_input = document.getElementById("current-input");
+var current_swatch = document.getElementById("current-swatch");
 var target_swatch = document.getElementById("target-swatch");
 var comp_swatches = document.getElementById("comp-swatches");
 
@@ -52,6 +54,18 @@ target_select.onchange = e =>
     {
         add_swatch(comp_swatches,colors[components[target][component]]);
     }
+}
+
+current_input.onchange = e =>
+{
+    if(target_select.value === '') return;
+    current_swatch.innerHTML = "";
+    var target = colors[target_select.value];
+    var dL = Number(current_input.querySelector("#current-L").value);
+    var da = Number(current_input.querySelector("#current-a").value);
+    var db = Number(current_input.querySelector("#current-b").value);
+    var current = new Color("current", target.L + dL, target.a + da, target.b + db);
+    add_swatch(current_swatch, current);
 }
 
 }
