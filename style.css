@@ -1,3 +1,14 @@
+body {
+    max-width: max-content;
+    margin: auto;
+}
+
+.swatch-box
+{
+    display:flex;
+    justify-content: center;
+}
+
 .swatch
 {
     width:50px;
