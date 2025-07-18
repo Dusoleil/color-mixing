@@ -8,6 +8,8 @@ var current_input = document.getElementById("current-input");
 var current_swatch = document.getElementById("current-swatch");
 var target_swatch = document.getElementById("target-swatch");
 var comp_swatches = document.getElementById("comp-swatches");
+var custom_input = document.getElementById("custom-input");
+var custom_swatch = document.getElementById("custom-swatch");
 
 var colors = {};
 var components = {};
@@ -22,7 +24,6 @@ pick_colors.onchange = e =>
         colors = {};
         components = {};
         target_select.innerHTML = "";
-        //contents.innerHTML = readerEvent.target.result;
         let obj = JSON.parse(readerEvent.target.result);
         for(let color of obj.colors)
         {
@@ -38,6 +39,7 @@ pick_colors.onchange = e =>
             target_select.appendChild(opt);
         }
         target_select.selectedIndex = "0";
+        target_select.dispatchEvent(new Event('change'))
         target_form.dispatchEvent(new Event('change'))
     }
 }
@@ -54,6 +56,8 @@ function update_component_swatches(current)
         add_swatch_info(comp_swatches,colors[component],colors[target],current);
         add_swatch(comp_swatches,colors[component]);
     }
+
+    custom_input.dispatchEvent(new Event('change'))
 }
 
 target_form.onchange = e =>
@@ -68,6 +72,35 @@ target_form.onchange = e =>
     }
 
     current_input.dispatchEvent(new Event('change'))
+}
+
+target_select.onchange = e =>
+{
+    custom_input.innerHTML = "";
+
+    var target = target_select.value;
+    if(target === '') return;
+
+    var table = document.createElement("table");
+    custom_input.appendChild(table);
+    var titlerow = table.insertRow();
+    var titlecell = titlerow.insertCell();
+    titlecell.setAttribute("colspan",2);
+    titlecell.innerHTML = "Custom Color Ratio";
+
+    for(let component of components[target])
+    {
+        let color = colors[component];
+        let comprow = table.insertRow();
+        let compnumcell = comprow.insertCell();
+        let compratio = document.createElement("input");
+        compnumcell.appendChild(compratio);
+        compratio.dataset.component = component;
+        compratio.setAttribute("type","number");
+        compratio.value = 0;
+        compratio.classList.add("comp-ratio");
+        comprow.insertCell().innerHTML = color.name;
+    }
 }
 
 input_deltas.onchange = e =>
@@ -85,6 +118,8 @@ input_deltas.onchange = e =>
     curb.max = e.target.checked ? 255 : 128;
 }
 
+var current_color = null;
+
 current_input.onchange = e =>
 {
     current_swatch.innerHTML = "";
@@ -98,10 +133,53 @@ current_input.onchange = e =>
     var da = Number(current_input.querySelector("#current-a").value);
     var db = Number(current_input.querySelector("#current-b").value);
     var current = new Color("Current Color", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
+    current_color = current;
     add_swatch_info(current_swatch, current, target_select.value === '' ? null : colors[target_select.value]);
     add_swatch(current_swatch, current);
 
     update_component_swatches(current);
+}
+
+custom_input.onchange = e =>
+{
+    custom_swatch.innerHTML = "";
+    var use_linear = document.getElementById("use-linear");
+
+    var n = 0;
+    var L = 0;
+    var a = 0;
+    var b = 0;
+
+    var compratios = custom_input.querySelectorAll("input");
+    for(let compratio of compratios)
+    {
+        let component = compratio.dataset.component;
+        let ratio = compratio.value;
+        let color = colors[component];
+
+        n += Math.abs(ratio);
+        L += (ratio * (use_linear.checked ? color.X : color.L));
+        a += (ratio * (use_linear.checked ? color.Y : color.a));
+        b += (ratio * (use_linear.checked ? color.Z : color.b));
+    }
+
+    if(n == 0) return;
+
+    L /= n;
+    a /= n;
+    b /= n;
+
+    if(use_linear.checked)
+    {
+        let lab = xyz_to_lab(L,a,b);
+        L = lab.L;
+        a = lab.a;
+        b = lab.b;
+    }
+
+    let color = new Color("Custom Color",L,a,b);
+    add_swatch_info(custom_swatch, color, colors[target_select.value], current_color);
+    add_swatch(custom_swatch, color);
 }
 
 }
@@ -175,6 +253,31 @@ function add_swatch(parent, color)
     const ctx = swatch.getContext("2d");
     ctx.fillStyle = color.hex;
     ctx.fillRect(0,0,swatch.width,swatch.height);
+}
+
+//https://rgbatohex.com/tools/xyz-to-lab
+function xyz_to_lab(x,y,z) {
+    // D65 illuminant white point
+    const xn = 95.047, yn = 100.000, zn = 108.883;
+
+    // Current XYZ values
+    const xNorm = x / xn;
+    const yNorm = y / yn;
+    const zNorm = z / zn;
+
+    // Apply nonlinear transformation
+    const f = (t) => t > 0.008856 ? Math.pow(t, 1/3) : (7.787 * t + 16/116);
+
+    const fx = f(xNorm);
+    const fy = f(yNorm);
+    const fz = f(zNorm);
+
+    // Calculate LAB values
+    const L = 116 * fy - 16;
+    const a = 500 * (fx - fy);
+    const b = 200 * (fy - fz);
+
+    return {L,a,b};
 }
 
 //https://rgbatohex.com/tools/lab-to-xyz
