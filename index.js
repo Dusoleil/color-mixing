@@ -104,18 +104,30 @@ function add_swatch_info(parent, color, target=null)
     var namecell = namerow.insertCell();
     namecell.setAttribute("colspan", 3);
     namecell.innerHTML = color.name;
+    var x = color.L;
+    var y = color.a;
+    var z = color.b
     var labrow = table.insertRow();
     labrow.insertCell().innerHTML = "Lab:";
-    labrow.insertCell().innerHTML = color.L.toFixed(2);
-    labrow.insertCell().innerHTML = color.a.toFixed(2);
-    labrow.insertCell().innerHTML = color.b.toFixed(2);
+    labrow.insertCell().innerHTML = x.toFixed(2);
+    labrow.insertCell().innerHTML = y.toFixed(2);
+    labrow.insertCell().innerHTML = z.toFixed(2);
     if(target != null)
     {
+        x -= target.L;
+        y -= target.a;
+        z -= target.b;
         var diffrow = table.insertRow();
         diffrow.insertCell().innerHTML = "&Delta;:";
-        diffrow.insertCell().innerHTML = (color.L-target.L).toFixed(2);
-        diffrow.insertCell().innerHTML = (color.a-target.a).toFixed(2);
-        diffrow.insertCell().innerHTML = (color.b-target.b).toFixed(2);
+        diffrow.insertCell().innerHTML = x.toFixed(2);
+        diffrow.insertCell().innerHTML = y.toFixed(2);
+        diffrow.insertCell().innerHTML = z.toFixed(2);
+        var unit = unit_vector(x,y,z);
+        var unitrow = table.insertRow();
+        unitrow.insertCell().innerHTML = "Unit &Delta;:";
+        unitrow.insertCell().innerHTML = unit.x.toFixed(2);
+        unitrow.insertCell().innerHTML = unit.y.toFixed(2);
+        unitrow.insertCell().innerHTML = unit.z.toFixed(2);
     }
 }
 
@@ -206,6 +218,18 @@ function rgb_to_hex(color)
         return ("0"+val.toString(16)).slice(-2);
     }
     return "#"+to_hex(r)+to_hex(g)+to_hex(b);
+}
+
+function vector_length(x,y,z)
+{
+    return Math.sqrt(Math.pow(x,2)+Math.pow(y,2)+Math.pow(z,2));
+}
+
+function unit_vector(x,y,z)
+{
+    var len = vector_length(x,y,z);
+    if(len == 0) return {x:0,y:0,z:0};
+    return {x:x/len,y:y/len,z:z/len};
 }
 
 class Color
