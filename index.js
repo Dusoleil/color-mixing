@@ -41,20 +41,30 @@ pick_colors.onchange = e =>
     }
 }
 
+function update_component_swatches(current)
+{
+    comp_swatches.innerHTML = "";
+
+    var target = target_select.value;
+    if(target === '') return;
+
+    for(let component of components[target])
+    {
+        add_swatch_info(comp_swatches,colors[component],colors[target],current);
+        add_swatch(comp_swatches,colors[component]);
+    }
+}
+
 target_select.onchange = e =>
 {
-    var target = target_select.value;
-
     target_swatch.innerHTML = "";
-    comp_swatches.innerHTML = "";
+
+    var target = target_select.value;
+    if(target === '') return;
 
     add_swatch_info(target_swatch, colors[target]);
     add_swatch(target_swatch, colors[target]);
-    for(let component of components[target])
-    {
-        add_swatch_info(comp_swatches,colors[component],colors[target]);
-        add_swatch(comp_swatches,colors[component]);
-    }
+
     current_input.dispatchEvent(new Event('change'))
 }
 
@@ -88,11 +98,13 @@ current_input.onchange = e =>
     var current = new Color("Current Color", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
     add_swatch_info(current_swatch, current, target_select.value === '' ? null : colors[target_select.value]);
     add_swatch(current_swatch, current);
+
+    update_component_swatches(current);
 }
 
 }
 
-function add_swatch_info(parent, color, target=null)
+function add_swatch_info(parent, color, target=null, current=null)
 {
     var div = document.createElement("div");
     parent.appendChild(div);
@@ -122,12 +134,27 @@ function add_swatch_info(parent, color, target=null)
         diffrow.insertCell().innerHTML = x.toFixed(2);
         diffrow.insertCell().innerHTML = y.toFixed(2);
         diffrow.insertCell().innerHTML = z.toFixed(2);
+
         var unit = unit_vector(x,y,z);
         var unitrow = table.insertRow();
         unitrow.insertCell().innerHTML = "Unit &Delta;:";
         unitrow.insertCell().innerHTML = unit.x.toFixed(2);
         unitrow.insertCell().innerHTML = unit.y.toFixed(2);
         unitrow.insertCell().innerHTML = unit.z.toFixed(2);
+
+        if(current != null)
+        {
+            x = current.L - target.L;
+            y = current.a - target.a;
+            z = current.b - target.b;
+            var curunit = unit_vector(x,y,z);
+            if(vector_length(curunit.x,curunit.y,curunit.z) == 0 || vector_length(unit.x,unit.y,unit.z) == 0) return;
+            var thetarow = table.insertRow();
+            thetarow.insertCell().innerHTML = "&Theta;:";
+            var thetacell = thetarow.insertCell();
+            thetacell.setAttribute("colspan", 3);
+            thetacell.innerHTML = unit_angle(unit.x,unit.y,unit.z,curunit.x,curunit.y,curunit.z)/Math.PI;
+        }
     }
 }
 
@@ -230,6 +257,11 @@ function unit_vector(x,y,z)
     var len = vector_length(x,y,z);
     if(len == 0) return {x:0,y:0,z:0};
     return {x:x/len,y:y/len,z:z/len};
+}
+
+function unit_angle(ux,uy,uz,vx,vy,vz)
+{
+    return Math.acos(ux*vx+uy*vy+uz*vz);
 }
 
 class Color
