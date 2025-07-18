@@ -63,6 +63,12 @@ input_deltas.onchange = e =>
     {
         delta.style.visibility = e.target.checked ? "visible" : "hidden";
     }
+    var cura = document.getElementById("current-a");
+    var curb = document.getElementById("current-b");
+    cura.min = e.target.checked ? -255 : -127;
+    curb.min = e.target.checked ? -255 : -127;
+    cura.max = e.target.checked ? 255 : 128;
+    curb.max = e.target.checked ? 255 : 128;
 }
 
 current_input.onchange = e =>
@@ -77,7 +83,7 @@ current_input.onchange = e =>
     var dL = Number(current_input.querySelector("#current-L").value);
     var da = Number(current_input.querySelector("#current-a").value);
     var db = Number(current_input.querySelector("#current-b").value);
-    var current = new Color("current", target.L + dL, target.a + da, target.b + db);
+    var current = new Color("current", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
     add_swatch(current_swatch, current);
 }
 
