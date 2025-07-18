@@ -100,7 +100,7 @@ function lab_to_xyz(color)
 //https://rgbatohex.com/tools/xyz-to-rgb
 function xyz_to_rgb(color)
 {
-    const x = color.x, y = color.y, z = color.z;
+    const x = color.X, y = color.Y, z = color.Z;
 
     // XYZ to sRGB transformation matrix
     const xyzToRgbMatrix = [
@@ -131,7 +131,7 @@ function xyz_to_rgb(color)
 
 function rgb_to_hex(color)
 {
-    const r=color.r,g=color.g,b=color.b;
+    const r = color.R, g = color.G, b = color.B;
     function to_hex(val)
     {
         return ("0"+val.toString(16)).slice(-2);
@@ -148,13 +148,13 @@ class Color
         this.a = a;
         this.b = b;
         var xyz = lab_to_xyz(this);
-        this.x = xyz.x;
-        this.y = xyz.y;
-        this.z = xyz.z;
+        this.X = xyz.x;
+        this.Y = xyz.y;
+        this.Z = xyz.z;
         var rgb = xyz_to_rgb(this);
-        this.r = rgb.r;
-        this.g = rgb.g;
-        this.b = rgb.b;
+        this.R = rgb.r;
+        this.G = rgb.g;
+        this.B = rgb.b;
         this.hex = rgb_to_hex(this);
     }
 }
