@@ -96,10 +96,26 @@ function add_swatch_info(parent, color, target=null)
 {
     var div = document.createElement("div");
     parent.appendChild(div);
-    div.innerHTML = `Name: ${color.name}<br \>Lab: ${color.L.toFixed(2)}, ${color.a.toFixed(2)}, ${color.b.toFixed(2)}`;
+    var table = document.createElement("table");
+    table.classList.add("swatch-info");
+    div.appendChild(table);
+    var namerow = table.insertRow();
+    namerow.insertCell().innerHTML = "Name:";
+    var namecell = namerow.insertCell();
+    namecell.setAttribute("colspan", 3);
+    namecell.innerHTML = color.name;
+    var labrow = table.insertRow();
+    labrow.insertCell().innerHTML = "Lab:";
+    labrow.insertCell().innerHTML = color.L.toFixed(2);
+    labrow.insertCell().innerHTML = color.a.toFixed(2);
+    labrow.insertCell().innerHTML = color.b.toFixed(2);
     if(target != null)
     {
-        div.innerHTML += `<br \>&Delta;: ${(color.L-target.L).toFixed(2)}, ${(color.a-target.a).toFixed(2)}, ${(color.b-target.b).toFixed(2)}`;
+        var diffrow = table.insertRow();
+        diffrow.insertCell().innerHTML = "&Delta;:";
+        diffrow.insertCell().innerHTML = (color.L-target.L).toFixed(2);
+        diffrow.insertCell().innerHTML = (color.a-target.a).toFixed(2);
+        diffrow.insertCell().innerHTML = (color.b-target.b).toFixed(2);
     }
 }
 

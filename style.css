@@ -1,6 +1,13 @@
 body {
-    max-width: max-content;
-    margin: auto;
+    max-width:max-content;
+    margin:auto;
+}
+
+table.swatch-info, .swatch-info tr, .swatch-info td
+{
+    border:1px solid #000000;
+    border-collapse:collapse;
+    padding:2px;
 }
 
 .swatch
