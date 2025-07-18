@@ -87,14 +87,18 @@ current_input.onchange = e =>
 
 function add_swatch(parent, color)
 {
+    var div = document.createElement("div");
+    parent.appendChild(div);
     var swatch = document.createElement("canvas");
-    swatch.classList.add("swatch");
-    const ctx = swatch.getContext("2d");
+    div.appendChild(swatch);
 
+    div.classList.add("swatch");
+    swatch.width = div.clientWidth;
+    swatch.height = div.clientHeight;
+
+    const ctx = swatch.getContext("2d");
     ctx.fillStyle = color.hex;
     ctx.fillRect(0,0,swatch.width,swatch.height);
-
-    parent.appendChild(swatch);
 }
 
 //https://rgbatohex.com/tools/lab-to-xyz
