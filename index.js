@@ -153,7 +153,7 @@ function add_swatch_info(parent, color, target=null, current=null)
             thetarow.insertCell().innerHTML = "&Theta;:";
             var thetacell = thetarow.insertCell();
             thetacell.setAttribute("colspan", 3);
-            thetacell.innerHTML = unit_angle(unit.x,unit.y,unit.z,curunit.x,curunit.y,curunit.z)/Math.PI;
+            thetacell.innerHTML = (((unit_angle(unit.x,unit.y,unit.z,curunit.x,curunit.y,curunit.z)/Math.PI)*2)-1).toFixed(4);
         }
     }
 }
