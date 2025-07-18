@@ -48,9 +48,11 @@ target_select.onchange = e =>
     target_swatch.innerHTML = "";
     comp_swatches.innerHTML = "";
 
+    add_swatch_info(target_swatch, colors[target]);
     add_swatch(target_swatch, colors[target]);
     for(let component of components[target])
     {
+        add_swatch_info(comp_swatches,colors[component],colors[target]);
         add_swatch(comp_swatches,colors[component]);
     }
     current_input.dispatchEvent(new Event('change'))
@@ -83,10 +85,22 @@ current_input.onchange = e =>
     var dL = Number(current_input.querySelector("#current-L").value);
     var da = Number(current_input.querySelector("#current-a").value);
     var db = Number(current_input.querySelector("#current-b").value);
-    var current = new Color("current", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
+    var current = new Color("Current Color", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
+    add_swatch_info(current_swatch, current, target_select.value === '' ? null : colors[target_select.value]);
     add_swatch(current_swatch, current);
 }
 
+}
+
+function add_swatch_info(parent, color, target=null)
+{
+    var div = document.createElement("div");
+    parent.appendChild(div);
+    div.innerHTML = `Name: ${color.name}<br \>Lab: ${color.L.toFixed(2)}, ${color.a.toFixed(2)}, ${color.b.toFixed(2)}`;
+    if(target != null)
+    {
+        div.innerHTML += `<br \>&Delta;: ${(color.L-target.L).toFixed(2)}, ${(color.a-target.a).toFixed(2)}, ${(color.b-target.b).toFixed(2)}`;
+    }
 }
 
 function add_swatch(parent, color)
