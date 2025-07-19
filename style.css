@@ -3,6 +3,13 @@ body {
     margin:auto;
 }
 
+#input-header
+{
+    position:sticky;
+    top:0;
+    background:#888888;
+}
+
 table.swatch-info, .swatch-info tr, .swatch-info td
 {
     border:1px solid #000000;
