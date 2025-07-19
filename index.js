@@ -207,24 +207,10 @@ function add_swatch_info(parent, color, target=null, current=null)
     labrow.insertCell().innerHTML = z.toFixed(2);
     if(target != null)
     {
-        x -= use_linear.checked ? target.X : target.L;
-        y -= use_linear.checked ? target.Y : target.a;
-        z -= use_linear.checked ? target.Z : target.b;
-        var diffrow = table.insertRow();
-        diffrow.insertCell().innerHTML = "&Delta;:";
-        diffrow.insertCell().innerHTML = x.toFixed(2);
-        diffrow.insertCell().innerHTML = y.toFixed(2);
-        diffrow.insertCell().innerHTML = z.toFixed(2);
-
-        var unit = unit_vector(x,y,z);
-        var unitrow = table.insertRow();
-        unitrow.insertCell().innerHTML = "Unit &Delta;:";
-        unitrow.insertCell().innerHTML = unit.x.toFixed(2);
-        unitrow.insertCell().innerHTML = unit.y.toFixed(2);
-        unitrow.insertCell().innerHTML = unit.z.toFixed(2);
-
+        add_deltas(table, target, color, use_linear.checked, "Target");
         if(current != null)
         {
+            add_deltas(table, current, color, use_linear.checked, "Current");
             var thetarow = table.insertRow();
             thetarow.insertCell().innerHTML = "&Theta;:";
             var thetacell = thetarow.insertCell();
@@ -232,6 +218,32 @@ function add_swatch_info(parent, color, target=null, current=null)
             thetacell.innerHTML = calc_theta(color,target,current,use_linear.checked).toFixed(4);
         }
     }
+}
+
+function add_deltas(table, from, to, linear, title)
+{
+    let fx = linear ? from.X : from.L;
+    let fy = linear ? from.Y : from.a;
+    let fz = linear ? from.Z : from.b;
+    let tx = linear ? to.X : to.L;
+    let ty = linear ? to.Y : to.a;
+    let tz = linear ? to.Z : to.b;
+    let x = tx - fx;
+    let y = ty = fy;
+    let z = tz - fz;
+
+    var diffrow = table.insertRow();
+    diffrow.insertCell().innerHTML = `${title} &Delta;:`;
+    diffrow.insertCell().innerHTML = x.toFixed(2);
+    diffrow.insertCell().innerHTML = y.toFixed(2);
+    diffrow.insertCell().innerHTML = z.toFixed(2);
+
+    var unit = unit_vector(x,y,z);
+    var unitrow = table.insertRow();
+    unitrow.insertCell().innerHTML = `Unit ${title} &Delta;:`;
+    unitrow.insertCell().innerHTML = unit.x.toFixed(2);
+    unitrow.insertCell().innerHTML = unit.y.toFixed(2);
+    unitrow.insertCell().innerHTML = unit.z.toFixed(2);
 }
 
 function add_swatch(parent, color)
