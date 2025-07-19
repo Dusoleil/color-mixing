@@ -225,16 +225,11 @@ function add_swatch_info(parent, color, target=null, current=null)
 
         if(current != null)
         {
-            x = use_linear.checked ? current.X - target.X : current.L - target.L;
-            y = use_linear.checked ? current.Y - target.Y : current.a - target.a;
-            z = use_linear.checked ? current.Z - target.Z : current.b - target.b;
-            var curunit = unit_vector(x,y,z);
-            if(vector_length(curunit.x,curunit.y,curunit.z) == 0 || vector_length(unit.x,unit.y,unit.z) == 0) return;
             var thetarow = table.insertRow();
             thetarow.insertCell().innerHTML = "&Theta;:";
             var thetacell = thetarow.insertCell();
             thetacell.setAttribute("colspan", 3);
-            thetacell.innerHTML = (((unit_angle(unit.x,unit.y,unit.z,curunit.x,curunit.y,curunit.z)/Math.PI)*2)-1).toFixed(4);
+            thetacell.innerHTML = calc_theta(color,target,current,use_linear.checked).toFixed(4);
         }
     }
 }
@@ -253,6 +248,31 @@ function add_swatch(parent, color)
     const ctx = swatch.getContext("2d");
     ctx.fillStyle = color.hex;
     ctx.fillRect(0,0,swatch.width,swatch.height);
+}
+
+function calc_theta(color, target, current, linear)
+{
+    let x = linear ? color.X : color.L;
+    let y = linear ? color.Y : color.a;
+    let z = linear ? color.Z : color.b;
+    let tx = linear ? target.X : target.L;
+    let ty = linear ? target.Y : target.a;
+    let tz = linear ? target.Z : target.b;
+    let cx = linear ? current.X : current.L;
+    let cy = linear ? current.Y : current.a;
+    let cz = linear ? current.Z : current.b;
+    x -= tx;
+    y -= ty;
+    z -= tz;
+    cx -= tx;
+    cy -= ty;
+    cz -= tz;
+    let unit = unit_vector(x,y,z);
+    let curunit = unit_vector(cx,cy,cz);
+    let theta = unit_angle(unit.x,unit.y,unit.z,curunit.x,curunit.y,curunit.z);
+    theta /= Math.PI;
+    theta = (theta*2)-1;
+    return theta;
 }
 
 //https://rgbatohex.com/tools/xyz-to-lab
