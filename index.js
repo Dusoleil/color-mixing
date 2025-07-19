@@ -229,7 +229,7 @@ function add_deltas(table, from, to, linear, title)
     let ty = linear ? to.Y : to.a;
     let tz = linear ? to.Z : to.b;
     let x = tx - fx;
-    let y = ty = fy;
+    let y = ty - fy;
     let z = tz - fz;
 
     var diffrow = table.insertRow();
