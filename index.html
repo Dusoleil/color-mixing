@@ -35,5 +35,23 @@
         <div id="comp-swatches"></div>
         <form id="custom-input"></form>
         <div id="custom-swatch"></div>
+        <form id="check-accuracy">
+            <div>
+                <label for="acc-select">Component to Move</label>
+                <select id="acc-select"></select>
+                <label for="acc-direction">Add or Remove</label>
+                <input type="checkbox" id="acc-direction" checked \>
+            </div>
+            <div>
+                <label for="acc-L"><span class="delta">&Delta;</span>L</label>
+                <input type="number" id="acc-L" class="lab" min="0" max="100" step="0.01" value="0" \>
+                <label for="acc-a"><span class="delta">&Delta;</span>a</label>
+                <input type="number" id="acc-a" class="lab" min="-255" max="255" step="0.01" value="0" \>
+                <label for="acc-b"><span class="delta">&Delta;</span>b</label>
+                <input type="number" id="acc-b" class="lab" min="-255" max="255" step="0.01" value="0" \>
+            </div>
+        </form>
+        <div id="display-accuracy">
+        </div>
     </body>
 </html>

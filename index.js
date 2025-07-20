@@ -10,6 +10,8 @@ var target_swatch = document.getElementById("target-swatch");
 var comp_swatches = document.getElementById("comp-swatches");
 var custom_input = document.getElementById("custom-input");
 var custom_swatch = document.getElementById("custom-swatch");
+var check_accuracy = document.getElementById("check-accuracy");
+var display_accuracy = document.getElementById("display-accuracy");
 
 var colors = {};
 var components = {};
@@ -77,6 +79,7 @@ target_form.onchange = e =>
 target_select.onchange = e =>
 {
     custom_input.innerHTML = "";
+    acc_select = check_accuracy.getElementsByTagName("select")[0];
 
     var target = target_select.value;
     if(target === '') return;
@@ -100,7 +103,13 @@ target_select.onchange = e =>
         compratio.value = 0;
         compratio.classList.add("comp-ratio");
         comprow.insertCell().innerHTML = color.name;
+
+        let opt = document.createElement("option");
+        opt.value = component;
+        opt.innerHTML = color.name;
+        acc_select.appendChild(opt);
     }
+    acc_select.selectedIndex = "0";
 }
 
 input_deltas.onchange = e =>
@@ -180,6 +189,68 @@ custom_input.onchange = e =>
     let color = new Color("Custom Color",L,a,b);
     add_swatch_info(custom_swatch, color, colors[target_select.value], current_color);
     add_swatch(custom_swatch, color);
+}
+
+check_accuracy.onchange = e =>
+{
+    display_accuracy.innerHTML = "";
+    acc_select = check_accuracy.getElementsByTagName("select")[0];
+    acc_direction = check_accuracy.querySelector("#acc-direction");
+
+    let target = new Color("0",0,0,0);
+    if(input_deltas.checked)
+    {
+        if(target_select.value === '') return;
+        target = colors[target_select.value];
+    }
+    let dL = Number(check_accuracy.querySelector("#acc-L").value);
+    let da = Number(check_accuracy.querySelector("#acc-a").value);
+    let db = Number(check_accuracy.querySelector("#acc-b").value);
+    let acc_color = new Color("Accuracy Color", Math.max(0,Math.min(target.L+dL,100)), Math.max(-127,Math.min(target.a+da,128)), Math.max(-127,Math.min(target.b+db,128)));
+
+    let exp_move_x = (colors[acc_select.value].X - current_color.X) * (acc_direction.checked ? 1 : -1);
+    let exp_move_y = (colors[acc_select.value].Y - current_color.Y) * (acc_direction.checked ? 1 : -1);
+    let exp_move_z = (colors[acc_select.value].Z - current_color.Z) * (acc_direction.checked ? 1 : -1);
+    let unit = unit_vector(exp_move_x, exp_move_y, exp_move_z);
+    exp_move_x = unit.x;
+    exp_move_y = unit.y;
+    exp_move_z = unit.z;
+    let acc_move_x = acc_color.X - current_color.X;
+    let acc_move_y = acc_color.Y - current_color.Y;
+    let acc_move_z = acc_color.Z - current_color.Z;
+    unit = unit_vector(acc_move_x, acc_move_y, acc_move_z);
+    acc_move_x = unit.x;
+    acc_move_y = unit.y;
+    acc_move_z = unit.z;
+    let accuracy = unit_angle(exp_move_x,exp_move_y,exp_move_z,acc_move_x,acc_move_y,acc_move_z);
+
+    let table = document.createElement("table");
+    display_accuracy.appendChild(table);
+    let row = table.insertRow();
+    row.insertCell().innerHTML = "Before:";
+    row.insertCell().innerHTML = current_color.X.toFixed(2);
+    row.insertCell().innerHTML = current_color.Y.toFixed(2);
+    row.insertCell().innerHTML = current_color.Z.toFixed(2);
+    row = table.insertRow();
+    row.insertCell().innerHTML = "After:";
+    row.insertCell().innerHTML = acc_color.X.toFixed(2);
+    row.insertCell().innerHTML = acc_color.Y.toFixed(2);
+    row.insertCell().innerHTML = acc_color.Z.toFixed(2);
+    row = table.insertRow();
+    row.insertCell().innerHTML = "Expected Move:";
+    row.insertCell().innerHTML = exp_move_x.toFixed(2);
+    row.insertCell().innerHTML = exp_move_y.toFixed(2);
+    row.insertCell().innerHTML = exp_move_z.toFixed(2);
+    row = table.insertRow();
+    row.insertCell().innerHTML = "Actual Move:";
+    row.insertCell().innerHTML = acc_move_x.toFixed(2);
+    row.insertCell().innerHTML = acc_move_y.toFixed(2);
+    row.insertCell().innerHTML = acc_move_z.toFixed(2);
+    row = table.insertRow();
+    row.insertCell().innerHTML = "Angle Difference:";
+    let cell = row.insertCell();
+    cell.setAttribute("colspan", 3);
+    cell.innerHTML = accuracy.toFixed(4);
 }
 
 }
