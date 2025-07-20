@@ -80,6 +80,7 @@ target_select.onchange = e =>
 {
     custom_input.innerHTML = "";
     acc_select = check_accuracy.getElementsByTagName("select")[0];
+    acc_select.innerHTML = "";
 
     var target = target_select.value;
     if(target === '') return;
