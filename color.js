@@ -5,7 +5,11 @@ export class Color
     constructor(name,Lab)
     {
         this.name = name;
-        this.Lab = vec3.clone(Lab);
+        let c = vec3.clone(Lab)
+        c[0] = this.#clamp(0,c[0],100);
+        c[1] = this.#clamp(-127,c[1],128);
+        c[2] = this.#clamp(-127,c[2],128);
+        this.Lab = c;
         this.L = this.Lab[0];
         this.a = this.Lab[1];
         this.b = this.Lab[2];
@@ -91,5 +95,10 @@ export class Color
             return ("0"+val.toString(16)).slice(-2);
         }
         return "#"+to_hex(r)+to_hex(g)+to_hex(b);
+    }
+
+    #clamp(min,val,max)
+    {
+        return Math.max(min,Math.min(val,max));
     }
 }

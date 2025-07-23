@@ -8,28 +8,9 @@
     </head>
     <body>
         <script src="imports.js"></script>
-        <script type=module src="index.js"></script>
-        <div id="input-header">
-            <div>
-                <label for="pick-colors">Colors File</label>
-                <input type="file" id="pick-colors" accept=".json" \>
-            </div>
-            <form id="target-form">
-                <label for="target-select">Target Color</label>
-                <select id="target-select"></select>
-                <label for="use-linear">Use Linear Space</label>
-                <input type="checkbox" id="use-linear" checked \>
-            </form>
-            <form id="current-input">
-                <label for="input-deltas">Use Deltas</label>
-                <input type="checkbox" id="input-deltas" checked \>
-                <label for="current-L"><span class="delta">&Delta;</span>L</label>
-                <input type="number" id="current-L" class="lab" min="0" max="100" step="0.01" value="0" \>
-                <label for="current-a"><span class="delta">&Delta;</span>a</label>
-                <input type="number" id="current-a" class="lab" min="-255" max="255" step="0.01" value="0" \>
-                <label for="current-b"><span class="delta">&Delta;</span>b</label>
-                <input type="number" id="current-b" class="lab" min="-255" max="255" step="0.01" value="0" \>
-            </form>
+        <script type="module" src="app.js"></script>
+        <div id="app">
+            <app-header></app-header>
         </div>
         <div id="target-swatch"></div>
         <div id="current-swatch"></div>
@@ -50,7 +31,6 @@
                 <input type="number" id="acc-b" class="lab" min="-255" max="255" step="0.01" value="0" \>
             </div>
         </form>
-        <div id="display-accuracy">
-        </div>
+        <div id="display-accuracy"></div>
     </body>
 </html>
