@@ -10,7 +10,8 @@ const import_map =
         color_pane:"./color_pane.js",
         color_viewer:"./color_viewer.js",
         color_detail:"./color_detail.js",
-        swatch:"./swatch.js"
+        swatch:"./swatch.js",
+        accuracy_check:"./accuracy_check.js"
     }
 }
 

@@ -4,6 +4,7 @@ import {vec3} from "glMatrix"
 import {Color} from "color"
 import {app_header} from "app_header"
 import {color_pane} from "color_pane"
+import {accuracy_check} from "accuracy_check"
 
 const store = createStore(
 {
@@ -61,7 +62,8 @@ const app = createApp(
     components:
     {
         "app-header":app_header,
-        "color-pane":color_pane
+        "color-pane":color_pane,
+        "accuracy-check":accuracy_check
     }
 });
 

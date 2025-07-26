@@ -10,19 +10,20 @@ export class Color
         c[1] = this.#clamp(-127,c[1],128);
         c[2] = this.#clamp(-127,c[2],128);
         this.Lab = c;
-        this.L = this.Lab[0];
-        this.a = this.Lab[1];
-        this.b = this.Lab[2];
         this.XYZ = this.#lab_to_xyz(this.Lab);
-        this.X = this.XYZ[0];
-        this.Y = this.XYZ[1];
-        this.Z = this.XYZ[2];
         this.RGB = this.#xyz_to_rgb(this.XYZ);
-        this.R = this.RGB[0];
-        this.G = this.RGB[1];
-        this.B = this.RGB[2];
         this.hex = this.#rgb_to_hex(this.RGB);
     }
+
+    get L(){return this.Lab[0];}
+    get a(){return this.Lab[1];}
+    get b(){return this.Lab[2];}
+    get X(){return this.XYZ[0];}
+    get Y(){return this.XYZ[1];}
+    get Z(){return this.XYZ[2];}
+    get R(){return this.RGB[0];}
+    get G(){return this.RGB[1];}
+    get B(){return this.RGB[2];}
 
     //https://rgbatohex.com/tools/lab-to-xyz
     #lab_to_xyz(color)
