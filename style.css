@@ -27,6 +27,11 @@ table.swatch-info, .swatch-info tr, .swatch-info td
     margin-right:auto;
 }
 
+.color-viewer
+{
+    margin-top:25px;
+}
+
 .lab
 {
     width:50px;

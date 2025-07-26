@@ -3,15 +3,17 @@ import {createStore} from "vuex"
 import {vec3} from "glMatrix"
 import {Color} from "color"
 import {app_header} from "app_header"
+import {color_pane} from "color_pane"
 
 const store = createStore(
 {
     state()
     {return{
         colors:null,
-        comp_colors:null,
+        comp_colors:{},
         current_color:null,
         target_color:null,
+        target_id:null,
         use_linear:true
     }},
     mutations:
@@ -37,7 +39,11 @@ const store = createStore(
         },
         set_target(state,id)
         {
-            if(id in state.colors) state.target_color = state.colors[id];
+            if(id in state.colors)
+            {
+                state.target_id = id;
+                state.target_color = state.colors[id];
+            }
         },
         set_linear(state,use)
         {
@@ -57,7 +63,8 @@ const app = createApp(
 {
     components:
     {
-        "app-header":app_header
+        "app-header":app_header,
+        "color-pane":color_pane
     }
 });
 

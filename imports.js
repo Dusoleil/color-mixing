@@ -6,7 +6,11 @@ const import_map =
         vuex:"https://cdnjs.cloudflare.com/ajax/libs/vuex/4.0.0/vuex.esm-browser.prod.js",
         glMatrix:"https://unpkg.com/gl-matrix@3.4.3/esm/index.js",
         color:"./color.js",
-        app_header:"./app_header.js"
+        app_header:"./app_header.js",
+        color_pane:"./color_pane.js",
+        color_viewer:"./color_viewer.js",
+        color_detail:"./color_detail.js",
+        swatch:"./swatch.js"
     }
 }
 

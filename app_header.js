@@ -60,6 +60,10 @@ export var app_header =
                 this.$store.commit("set_current",{Lab:this.current,delta:this.input_delta});
             },
             deep:true
+        },
+        input_delta()
+        {
+            this.$store.commit("set_current",{Lab:this.current,delta:this.input_delta});
         }
     },
     template:/*html*/`
