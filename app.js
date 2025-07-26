@@ -10,10 +10,10 @@ const store = createStore(
     state()
     {return{
         colors:null,
-        comp_colors:{},
+        color_map:{},
         current_color:null,
         target_color:null,
-        target_id:null,
+        comp_colors:[],
         use_linear:true
     }},
     mutations:
@@ -24,25 +24,22 @@ const store = createStore(
             reader.readAsText(file,'UTF-8');
             reader.onload = readerEvent =>
             {
-                state.colors = {};
-                state.comp_colors = {};
                 let obj = JSON.parse(readerEvent.target.result);
-                for(let color of obj.colors)
-                {
-                    state.colors[color.id] = new Color(color.name,vec3.fromValues(color.L,color.a,color.b));
-                }
-                for(let target of obj.targets)
-                {
-                    state.comp_colors[target.id] = target.components;
-                }
+                state.colors = Object.values(obj.colors).reduce((acc,col) => {acc[col.id] = new Color(col.name,vec3.fromValues(col.L,col.a,col.b));return acc},{});
+                state.color_map = Object.values(obj.targets).reduce((acc,tar) => {acc[tar.id] = tar.components;return acc},{});
             }
         },
         set_target(state,id)
         {
             if(id in state.colors)
             {
-                state.target_id = id;
                 state.target_color = state.colors[id];
+                state.comp_colors = state.color_map[id].map((i) => state.colors[i]);
+            }
+            else
+            {
+                state.target_color = null;
+                state.comp_colors = [];
             }
         },
         set_linear(state,use)
@@ -52,7 +49,7 @@ const store = createStore(
         set_current(state,val)
         {
             let origin = vec3.create();
-            if(val.delta && state.target_color) origin = state.target_color.Lab;
+            if(val.delta && state.target_color) origin = vec3.clone(state.target_color.Lab);
             vec3.add(origin,origin,val.Lab);
             state.current_color = new Color("Current Color", origin);
         }

@@ -2,19 +2,19 @@ export var app_header =
 {
     data()
     {return{
-        target:0,
+        target:"",
         input_delta:true,
         current:[0,0,0]
     }},
+    created()
+    {
+        this.$store.commit("set_current",{Lab:this.current,delta:this.input_delta});
+    },
     computed:
     {
         colors()
         {
-            let c = {};
-            for(let k in this.$store.state.comp_colors)
-                c[k] = this.$store.state.colors[k]
-            if(Object.keys(c).length > 0) this.target = Object.keys(c)[1];
-            return c;
+            return Object.keys(this.$store.state.color_map).reduce((c,id) => {c[id] = this.$store.state.colors[id]; return c;},{});
         },
         delta_visibility()
         {
@@ -37,17 +37,21 @@ export var app_header =
     {
         pick_colors(e)
         {
-            var file = e.target.files[0];
-            this.$store.commit("load_color_file",file);
+            this.$store.commit("load_color_file",e.target.files[0]);
         },
         use_linear(e)
         {
-            var linear = e.target.checked;
-            this.$store.commit("set_linear",linear);
+            this.$store.commit("set_linear",e.target.checked);
         }
     },
     watch:
     {
+        async colors()
+        {
+            this.target = "";
+            await this.$nextTick();
+            this.target = Object.keys(this.colors)[0];
+        },
         target()
         {
             this.$store.commit("set_target",this.target);

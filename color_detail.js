@@ -93,34 +93,38 @@ export var color_detail =
                     <td>{{coords[1].toFixed(2)}}</td>
                     <td>{{coords[2].toFixed(2)}}</td>
                 </tr>
-                <tr v-if="detail > DETAIL_LEVEL.BASIC">
-                    <td>Target &Delta;:</td>
-                    <td>{{target_delta[0].toFixed(2)}}</td>
-                    <td>{{target_delta[1].toFixed(2)}}</td>
-                    <td>{{target_delta[2].toFixed(2)}}</td>
-                </tr>
-                <tr v-if="detail > DETAIL_LEVEL.BASIC">
-                    <td>Unit Target &Delta;:</td>
-                    <td>{{target_delta_unit[0].toFixed(2)}}</td>
-                    <td>{{target_delta_unit[1].toFixed(2)}}</td>
-                    <td>{{target_delta_unit[2].toFixed(2)}}</td>
-                </tr>
-                <tr v-if="detail > DETAIL_LEVEL.PARTIAL">
-                    <td>Current &Delta;:</td>
-                    <td>{{current_delta[0].toFixed(2)}}</td>
-                    <td>{{current_delta[1].toFixed(2)}}</td>
-                    <td>{{current_delta[2].toFixed(2)}}</td>
-                </tr>
-                <tr v-if="detail > DETAIL_LEVEL.PARTIAL">
-                    <td>Unit Current &Delta;:</td>
-                    <td>{{current_delta_unit[0].toFixed(2)}}</td>
-                    <td>{{current_delta_unit[1].toFixed(2)}}</td>
-                    <td>{{current_delta_unit[2].toFixed(2)}}</td>
-                </tr>
-                <tr v-if="detail > DETAIL_LEVEL.PARTIAL">
-                    <td>&Theta;:</td>
-                    <td colspan="3">{{theta.toFixed(4)}}</td>
-                </tr>
+                <template v-if="detail > DETAIL_LEVEL.BASIC && target">
+                    <tr>
+                        <td>Target &Delta;:</td>
+                        <td>{{target_delta[0].toFixed(2)}}</td>
+                        <td>{{target_delta[1].toFixed(2)}}</td>
+                        <td>{{target_delta[2].toFixed(2)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Unit Target &Delta;:</td>
+                        <td>{{target_delta_unit[0].toFixed(2)}}</td>
+                        <td>{{target_delta_unit[1].toFixed(2)}}</td>
+                        <td>{{target_delta_unit[2].toFixed(2)}}</td>
+                    </tr>
+                </template>
+                <template v-if="detail > DETAIL_LEVEL.PARTIAL">
+                    <tr>
+                        <td>Current &Delta;:</td>
+                        <td>{{current_delta[0].toFixed(2)}}</td>
+                        <td>{{current_delta[1].toFixed(2)}}</td>
+                        <td>{{current_delta[2].toFixed(2)}}</td>
+                    </tr>
+                    <tr>
+                        <td>Unit Current &Delta;:</td>
+                        <td>{{current_delta_unit[0].toFixed(2)}}</td>
+                        <td>{{current_delta_unit[1].toFixed(2)}}</td>
+                        <td>{{current_delta_unit[2].toFixed(2)}}</td>
+                    </tr>
+                    <tr>
+                        <td>&Theta;:</td>
+                        <td colspan="3">{{theta.toFixed(4)}}</td>
+                    </tr>
+                </template>
             </tbody></table>
         </div>`
 };

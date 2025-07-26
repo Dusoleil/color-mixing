@@ -19,15 +19,7 @@ export var color_pane =
         },
         comp_colors()
         {
-            if(this.$store.state.target_id in this.$store.state.comp_colors)
-            {
-                let c = [];
-                for(let i of this.$store.state.comp_colors[this.$store.state.target_id])
-                    c.push(this.$store.state.colors[i]);
-                return c;
-            }
-            else
-                return null;
+            return this.$store.state.comp_colors;
         }
     },
     components:
