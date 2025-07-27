@@ -31,6 +31,10 @@ export var app_header =
         delta_max()
         {
             return this.input_delta ? 255 : 128;
+        },
+        mobile_num_input()
+        {
+            return this.$vuetify.display.mobile ? 'hidden' : 'stacked';
         }
     },
     methods:
@@ -72,15 +76,17 @@ export var app_header =
     },
     template:/*html*/`
         <v-sheet location="top left" position="sticky" elevation="5" rounded="b-xl" class="pa-3">
-            <div class="d-flex ga-4">
+            <div class="ga-4" :class="$vuetify.display.mobile ? '' : 'd-flex'">
                 <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
+                <div class="d-flex ga-4" :class="$vuetify.display.mobile ? '' : 'w-66'">
                 <v-select label="Target Color" :items="colors" v-model="target"></v-select>
-                <v-switch label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
+                <v-switch class="w-33" label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
+                </div>
             </div>
             <div class="d-flex ga-4">
-                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
-                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
-                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
+                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
+                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
+                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
                 <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
             </div>
                 </v-sheet>`

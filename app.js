@@ -70,7 +70,22 @@ const app = createApp(
 
 const uix = createVuetify(
 {
-    //blueprint:blueprints.md2
+    theme:
+    {
+        defaultTheme:"dark"
+    },
+    blueprint:blueprints.md3,
+    display:
+    {
+        mobileBreakpoint:"sm"
+    },
+    defaults:
+    {
+        VNumberInput:
+        {
+            inset:true
+        }
+    }
 });
 
 app.use(store);
