@@ -1,5 +1,6 @@
 import {createApp} from "vue"
 import {createStore} from "vuex"
+import {createVuetify,blueprints} from "vuetify"
 import {vec3} from "glMatrix"
 import {Color} from "color"
 import {app_header} from "app_header"
@@ -67,5 +68,11 @@ const app = createApp(
     }
 });
 
+const uix = createVuetify(
+{
+    //blueprint:blueprints.md2
+});
+
 app.use(store);
+app.use(uix);
 app.mount("#app");
