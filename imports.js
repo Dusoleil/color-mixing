@@ -5,6 +5,7 @@ const import_map =
         vue:"https://unpkg.com/vue@3.5.18/dist/vue.esm-browser.js",
         vuex:"https://cdnjs.cloudflare.com/ajax/libs/vuex/4.0.0/vuex.esm-browser.prod.js",
         vuetify:"https://cdn.jsdelivr.net/npm/vuetify@3.9.2/dist/vuetify.esm.js",
+        colors:"https://cdn.jsdelivr.net/npm/vuetify@3.9.2/lib/util/colors.js",
         glMatrix:"https://unpkg.com/gl-matrix@3.4.3/esm/index.js",
         color:"./color.js",
         app_header:"./app_header.js",

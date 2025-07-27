@@ -1,6 +1,7 @@
 import {createApp} from "vue"
 import {createStore} from "vuex"
 import {createVuetify,blueprints} from "vuetify"
+import colors from "colors"
 import {vec3} from "glMatrix"
 import {Color} from "color"
 import {app_header} from "app_header"
@@ -72,7 +73,21 @@ const uix = createVuetify(
 {
     theme:
     {
-        defaultTheme:"dark"
+        defaultTheme:"dark",
+        themes:
+        {
+            dark:
+            {
+                colors:
+                {
+                    background:"#100E0D",
+                    surface:"#1C1917",
+                    primary:"#7B7263",
+                    secondary:"#B9B2BD",
+                    info:"#35CE8D"
+                }
+            }
+        }
     },
     blueprint:blueprints.md3,
     display:
