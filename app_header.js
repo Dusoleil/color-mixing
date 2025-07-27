@@ -14,7 +14,7 @@ export var app_header =
     {
         colors()
         {
-            return Object.keys(this.$store.state.color_map).reduce((c,id) => {c[id] = this.$store.state.colors[id]; return c;},{});
+            return Object.keys(this.$store.state.color_map).map((id) => {return {"value":id,"title":this.$store.state.colors[id].name}});
         },
         delta_visibility()
         {
@@ -50,7 +50,7 @@ export var app_header =
         {
             this.target = "";
             await this.$nextTick();
-            this.target = Object.keys(this.colors)[0];
+            this.target = this.colors[0].value;
         },
         target()
         {
@@ -71,28 +71,17 @@ export var app_header =
         }
     },
     template:/*html*/`
-        <div id="input-header">
-            <div>
-                <label for="pick-colors">Colors File</label>
-                <input type="file" id="pick-colors" accept=".json" @change="pick_colors"\>
+        <v-sheet location="top left" position="sticky" elevation="5" rounded="b-xl" class="pa-3">
+            <div class="d-flex ga-4">
+                <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
+                <v-select label="Target Color" :items="colors" v-model="target"></v-select>
+                <v-switch label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
             </div>
-            <form id="target-form">
-                <label for="target-select">Target Color</label>
-                <select id="target-select" v-model="target">
-                    <option v-for="(color,id) in colors" :value="id">{{color.name}}</option>
-                </select>
-                <label for="use-linear">Use Linear Space</label>
-                <input type="checkbox" id="use-linear" @change="use_linear" checked \>
-            </form>
-            <form id="current-input">
-                <label for="input-deltas">Use Deltas</label>
-                <input type="checkbox" id="input-deltas" v-model="input_delta" checked \>
-                <label for="current-L"><span :style="delta_visibility">&Delta;</span>L</label>
-                <input type="number" id="current-L" class="lab" :min="delta_L_min" max="100" step="0.01" v-model="current[0]" \>
-                <label for="current-a"><span :style="delta_visibility">&Delta;</span>a</label>
-                <input type="number" id="current-a" class="lab" :min="delta_min" :max="delta_max" step="0.01" v-model="current[1]" \>
-                <label for="current-b"><span :style="delta_visibility">&Delta;</span>b</label>
-                <input type="number" id="current-b" class="lab" :min="delta_min" :max="delta_max" step="0.01" v-model="current[2]" \>
-            </form>
-        </div>`
+            <div class="d-flex ga-4">
+                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
+                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
+                <v-number-input inset control-variant="stacked" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
+                <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
+            </div>
+                </v-sheet>`
 };

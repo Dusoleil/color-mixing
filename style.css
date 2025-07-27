@@ -1,10 +1,3 @@
-#input-header
-{
-    position:sticky;
-    top:0;
-    background:#888888;
-}
-
 table.swatch-info, .swatch-info tr, .swatch-info td
 {
     border:1px solid #000000;
@@ -25,14 +18,4 @@ table.swatch-info, .swatch-info tr, .swatch-info td
 .color-viewer
 {
     margin-top:25px;
-}
-
-.lab
-{
-    width:50px;
-}
-
-.comp-ratio
-{
-    width:30px;
 }
