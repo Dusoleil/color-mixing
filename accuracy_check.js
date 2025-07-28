@@ -21,7 +21,7 @@ export var accuracy_check =
         },
         comp_colors()
         {
-            return this.$store.state.comp_colors;
+            return this.$store.state.comp_colors.map((col) => {return {"value":col,"title":col.name}});
         },
         color_after_move()
         {
@@ -47,36 +47,32 @@ export var accuracy_check =
         angle()
         {
             return vec3.angle(this.expected_move,this.actual_move);
+        },
+        mobile_num_input()
+        {
+            return this.$vuetify.display.mobile ? 'hidden' : 'stacked';
         }
     },
     watch:
     {
         comp_colors()
         {
-            this.moving_comp = this.comp_colors[0];
+            this.moving_comp = this.comp_colors[0].value;
         }
     },
     template:/*html*/`
-        <div>
-            <form id="check-accuracy">
-                <div>
-                    <label for="acc-select">Component to Move</label>
-                    <select id="acc-select" v-model="moving_comp">
-                        <option v-for="color in comp_colors" :value="color">{{color.name}}</option>
-                    </select>
-                    <label for="acc-direction">Add or Remove</label>
-                    <input type="checkbox" id="acc-direction" v-model="add_or_remove" checked \>
-                </div>
-                <div>
-                    <label for="acc-L">&Delta;L</label>
-                    <input type="number" id="acc-L" class="lab" min="0" max="100" step="0.01" v-model="delta_after_move[0]" \>
-                    <label for="acc-a">&Delta;a</label>
-                    <input type="number" id="acc-a" class="lab" min="-255" max="255" step="0.01" v-model="delta_after_move[1]" \>
-                    <label for="acc-b">&Delta;b</label>
-                    <input type="number" id="acc-b" class="lab" min="-255" max="255" step="0.01" v-model="delta_after_move[2]" \>
-                </div>
-            </form>
-            <table id="display-accuracy" v-if="target && current && moving_comp"><tbody>
+        <v-card title="Check Accuracy" class="mx-auto mt-10" :style="{'max-width':'max-content'}"><v-card-text>
+            <div class="d-flex ga-4">
+                <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors" v-model="moving_comp"></v-select>
+                <v-switch prepend-icon="mdi-minus" append-icon="mdi-plus" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
+            </div>
+            <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
+            <div class="d-flex ga-4">
+                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
+                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
+                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+            </div>
+            <v-table v-if="target && current && moving_comp"><tbody>
                 <tr>
                     <td>Before:</td>
                     <td>{{current.X.toFixed(2)}}</td>
@@ -105,6 +101,6 @@ export var accuracy_check =
                     <td>Accuracy &Theta;:</td>
                     <td colspan="3">{{angle.toFixed(4)}}</td>
                 </tr>
-            </tbody></table>
-        </div>`
+            </tbody></v-table>
+        </v-card-text></v-card>`
 };

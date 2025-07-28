@@ -81,7 +81,7 @@ export var color_detail =
         }
     },
     template:/*html*/`
-        <div><v-expansion-panels>
+        <v-expansion-panels>
             <v-expansion-panel title="Coords"><v-expansion-panel-text>
             <v-table><tbody>
                 <tr>
@@ -134,5 +134,5 @@ export var color_detail =
                 </tr>
             </tbody></v-table>
             </template>
-        </v-expansion-panels></div>`
+        </v-expansion-panels>`
 };
