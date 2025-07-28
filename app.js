@@ -126,6 +126,7 @@ const uix = createVuetify(
         {
             static:true,
             multiple:true,
+            variant:"accordion",
             class:["d-flex flex-column justify-center"]
         },
         VTable:

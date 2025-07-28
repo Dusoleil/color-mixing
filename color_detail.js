@@ -127,13 +127,12 @@ export var color_detail =
                 </tr>
             </tbody></v-table>
             </v-expansion-panel-text></v-expansion-panel>
-            <v-expansion-panel title="&Theta;"><v-expansion-panel-text>
             <v-table><tbody>
                 <tr>
-                    <td colspan="4">{{theta.toFixed(4)}}</td>
+                    <td>&Theta;:</td>
+                    <td colspan="3">{{theta.toFixed(4)}}</td>
                 </tr>
             </tbody></v-table>
-            </v-expansion-panel-text></v-expansion-panel>
             </template>
         </v-expansion-panels></div>`
 };
