@@ -27,7 +27,7 @@ export var color_pane =
         "color-viewer":color_viewer
     },
     template:/*html*/`
-        <div id="color-pane">
+        <div class="d-flex flex-column">
             <color-viewer :detail="DETAIL_LEVEL.BASIC" v-if="target" :color="target"></color-viewer>
             <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="current" :color="current"></color-viewer>
             <color-viewer :detail="DETAIL_LEVEL.FULL" v-for="color in comp_colors" :color="color"></color-viewer>

@@ -82,7 +82,7 @@ export var color_detail =
     },
     template:/*html*/`
         <div>
-            <table class="swatch-info"><tbody>
+            <v-table class="border" density="compact" striped="odd"><tbody>
                 <tr>
                     <td>Name:</td>
                     <td colspan="3">{{color.name}}</td>
@@ -125,6 +125,6 @@ export var color_detail =
                         <td colspan="3">{{theta.toFixed(4)}}</td>
                     </tr>
                 </template>
-            </tbody></table>
+            </tbody></v-table>
         </div>`
 };
