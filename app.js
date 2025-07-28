@@ -116,7 +116,7 @@ const uix = createVuetify(
     {
         VMain:
         {
-            class:["ma-auto"]
+            class:["ma-auto","pa-auto"]
         },
         VNumberInput:
         {

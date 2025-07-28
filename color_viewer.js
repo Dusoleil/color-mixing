@@ -26,7 +26,7 @@ export var color_viewer =
         "swatch":swatch
     },
     template:/*html*/`
-        <v-card elevation="10" class="mx-auto mt-16 overflow-visible">
+        <v-card elevation="10" class="mt-8 overflow-visible" :style="$vuetify.display.mobile?{'min-width':'75%'}:''">
             <swatch :color="color" class="ml-auto" :style="swatch_style"></swatch>
             <v-card-title>{{color.name}}</v-card-title>
             <v-card-subtitle>Lab({{color.L.toFixed(2)}}, {{color.a.toFixed(2)}}, {{color.b.toFixed(2)}})</v-card-subtitle>
