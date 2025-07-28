@@ -6,27 +6,19 @@ export var swatch =
     ],
     data()
     {return{
-        div_width:0,
-        div_height:0
+        obv:new ResizeObserver((entries) =>
+            {
+                this.draw_swatch();
+            })
     }},
     methods:
     {
-        onresize()
-        {
-            var div = this.$el;
-            if(this.div_width != div.clientWidth || this.div_height != div.clientHeight)
-            {
-                this.draw_swatch();
-            }
-        },
         draw_swatch()
         {
             var div = this.$el;
-            this.div_width = div.clientWidth;
-            this.div_height = div.clientHeight;
             var canvas = this.$el.querySelector("canvas");
-            canvas.width = this.div_width;
-            canvas.height = this.div_height;
+            canvas.width = div.clientWidth;
+            canvas.height = div.clientHeight;
             const ctx = canvas.getContext("2d");
             ctx.fillStyle = this.color.hex;
             ctx.roundRect(0,0,canvas.width,canvas.height,[24,24,24,4]);
@@ -36,13 +28,18 @@ export var swatch =
     mounted()
     {
         this.draw_swatch();
+        this.obv.observe(this.$el);
+    },
+    unmounted()
+    {
+        this.obv.disconnect();
     },
     updated()
     {
         this.draw_swatch();
     },
     template:/*html*/`
-        <div v-resize="onresize">
+        <div>
             <canvas width='1px' height='1px'></canvas>
         </div>`
 };
