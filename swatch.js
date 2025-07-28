@@ -39,7 +39,7 @@ export var swatch =
         this.draw_swatch();
     },
     template:/*html*/`
-        <div>
+        <div class="border-0 rounded-t-xl rounded-be-xl elevation-15">
             <canvas width='1px' height='1px'></canvas>
         </div>`
 };

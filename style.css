@@ -8,6 +8,11 @@
     z-index:unset !important;
 }
 
+.v-expansion-panel-text > *
+{
+    padding:0 !important;
+}
+
 .v-table table tr td
 {
     padding:0px 4px !important;

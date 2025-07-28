@@ -81,50 +81,59 @@ export var color_detail =
         }
     },
     template:/*html*/`
-        <div>
-            <v-table class="border" density="compact" striped="odd"><tbody>
-                <tr>
-                    <td>Name:</td>
-                    <td colspan="3">{{color.name}}</td>
-                </tr>
+        <div><v-expansion-panels>
+            <v-expansion-panel title="Coords"><v-expansion-panel-text>
+            <v-table><tbody>
                 <tr>
                     <td>{{use_linear ? "XYZ" : "Lab"}}</td>
                     <td>{{coords[0].toFixed(2)}}</td>
                     <td>{{coords[1].toFixed(2)}}</td>
                     <td>{{coords[2].toFixed(2)}}</td>
                 </tr>
-                <template v-if="detail > DETAIL_LEVEL.BASIC && target">
-                    <tr>
-                        <td>Target &Delta;:</td>
-                        <td>{{target_delta[0].toFixed(2)}}</td>
-                        <td>{{target_delta[1].toFixed(2)}}</td>
-                        <td>{{target_delta[2].toFixed(2)}}</td>
-                    </tr>
-                    <tr>
-                        <td>Unit Target &Delta;:</td>
-                        <td>{{target_delta_unit[0].toFixed(2)}}</td>
-                        <td>{{target_delta_unit[1].toFixed(2)}}</td>
-                        <td>{{target_delta_unit[2].toFixed(2)}}</td>
-                    </tr>
-                </template>
-                <template v-if="detail > DETAIL_LEVEL.PARTIAL">
-                    <tr>
-                        <td>Current &Delta;:</td>
-                        <td>{{current_delta[0].toFixed(2)}}</td>
-                        <td>{{current_delta[1].toFixed(2)}}</td>
-                        <td>{{current_delta[2].toFixed(2)}}</td>
-                    </tr>
-                    <tr>
-                        <td>Unit Current &Delta;:</td>
-                        <td>{{current_delta_unit[0].toFixed(2)}}</td>
-                        <td>{{current_delta_unit[1].toFixed(2)}}</td>
-                        <td>{{current_delta_unit[2].toFixed(2)}}</td>
-                    </tr>
-                    <tr>
-                        <td>&Theta;:</td>
-                        <td colspan="3">{{theta.toFixed(4)}}</td>
-                    </tr>
-                </template>
             </tbody></v-table>
-        </div>`
+            </v-expansion-panel-text></v-expansion-panel>
+            <template v-if="detail > DETAIL_LEVEL.BASIC && target">
+            <v-expansion-panel title="&Delta;"><v-expansion-panel-text>
+            <v-table><tbody>
+                <tr>
+                    <td>Target:</td>
+                    <td>{{target_delta[0].toFixed(2)}}</td>
+                    <td>{{target_delta[1].toFixed(2)}}</td>
+                    <td>{{target_delta[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Current:</td>
+                    <td>{{current_delta[0].toFixed(2)}}</td>
+                    <td>{{current_delta[1].toFixed(2)}}</td>
+                    <td>{{current_delta[2].toFixed(2)}}</td>
+                </tr>
+            </tbody></v-table>
+            </v-expansion-panel-text></v-expansion-panel>
+            </template>
+            <template v-if="detail > DETAIL_LEVEL.PARTIAL">
+            <v-expansion-panel title="Unit &Delta;"><v-expansion-panel-text>
+            <v-table><tbody>
+                <tr>
+                    <td>Target:</td>
+                    <td>{{target_delta_unit[0].toFixed(2)}}</td>
+                    <td>{{target_delta_unit[1].toFixed(2)}}</td>
+                    <td>{{target_delta_unit[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Current:</td>
+                    <td>{{current_delta_unit[0].toFixed(2)}}</td>
+                    <td>{{current_delta_unit[1].toFixed(2)}}</td>
+                    <td>{{current_delta_unit[2].toFixed(2)}}</td>
+                </tr>
+            </tbody></v-table>
+            </v-expansion-panel-text></v-expansion-panel>
+            <v-expansion-panel title="&Theta;"><v-expansion-panel-text>
+            <v-table><tbody>
+                <tr>
+                    <td colspan="4">{{theta.toFixed(4)}}</td>
+                </tr>
+            </tbody></v-table>
+            </v-expansion-panel-text></v-expansion-panel>
+            </template>
+        </v-expansion-panels></div>`
 };

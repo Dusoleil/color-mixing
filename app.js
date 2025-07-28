@@ -121,6 +121,18 @@ const uix = createVuetify(
         VNumberInput:
         {
             inset:true
+        },
+        VExpansionPanels:
+        {
+            static:true,
+            multiple:true,
+            class:["d-flex flex-column justify-center"]
+        },
+        VTable:
+        {
+            class:["border"],
+            density:"compact",
+            striped:"odd"
         }
     }
 });
