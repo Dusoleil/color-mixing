@@ -1,3 +1,13 @@
+.app-header
+{
+    z-index:10 !important;
+}
+
+.app-header *
+{
+    z-index:unset !important;
+}
+
 .v-table table tr td
 {
     padding:0px 4px !important;
