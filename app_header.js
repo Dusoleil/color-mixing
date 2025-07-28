@@ -76,7 +76,7 @@ export var app_header =
         }
     },
     template:/*html*/`
-        <v-sheet location="top left" position="sticky" elevation="5" rounded="b-xl" class="pa-3" color="surface-light">
+        <v-sheet location="top left" position="sticky" elevation="20" rounded="b-xl" class="pa-3" color="surface-light" :style="{'z-index':'10000'}">
             <v-expand-transition><div v-show="!$vuetify.display.mobile || expand">
                 <div class="ga-4" :class="$vuetify.display.mobile ? '' : 'd-flex'">
                     <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
