@@ -15,10 +15,25 @@
         <div id="app">
             <v-app>
                 <app-header></app-header>
-                <v-main>
-                    <color-pane></color-pane>
-                    <accuracy-check></accuracy-check>
-                </v-main>
+                <v-main><v-window class="ma-auto pa-auto w-100 h-100" v-model="page">
+                    <v-window-item :value="0">
+                        <color-pane></color-pane>
+                    </v-window-item>
+                    <v-window-item :value="1">
+                        <accuracy-check></accuracy-check>
+                    </v-window-item>
+                    <v-fab key="" :app="true" location="right bottom" :color="open ? '' : 'primary'" icon elevation="10" :size="nav_main_size">
+                        <v-icon>{{open?'mdi-close':'mdi-navigation-outline'}}</v-icon>
+                        <v-speed-dial v-model="open" location="left center" transition="slide-y-transition" activator="parent" :open-on-click="true" :close-on-content-click="true">
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=0">
+                                <v-icon>mdi-palette-swatch-variant</v-icon>
+                            </v-btn>
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=1">
+                                <v-icon>mdi-check-decagram</v-icon>
+                            </v-btn>
+                        </v-speed-dial>
+                    </v-fab>
+                </v-window></v-main>
             </v-app>
         </div>
     </body>

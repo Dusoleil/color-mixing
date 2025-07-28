@@ -61,6 +61,22 @@ const store = createStore(
 
 const app = createApp(
 {
+    data()
+    {return{
+        page:0,
+        open:false
+    }},
+    computed:
+    {
+        nav_main_size()
+        {
+            return this.$vuetify.display.mobile ? "default" : "large";
+        },
+        nav_dial_size()
+        {
+            return this.$vuetify.display.mobile ? "small" : "default";
+        }
+    },
     components:
     {
         "app-header":app_header,
@@ -114,10 +130,6 @@ const uix = createVuetify(
     },
     defaults:
     {
-        VMain:
-        {
-            class:["ma-auto","pa-auto"]
-        },
         VNumberInput:
         {
             inset:true
