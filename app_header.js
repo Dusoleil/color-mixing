@@ -2,6 +2,7 @@ export var app_header =
 {
     data()
     {return{
+        expand:true,
         target:"",
         input_delta:true,
         current:[0,0,0]
@@ -76,18 +77,21 @@ export var app_header =
     },
     template:/*html*/`
         <v-sheet location="top left" position="sticky" elevation="5" rounded="b-xl" class="pa-3">
-            <div class="ga-4" :class="$vuetify.display.mobile ? '' : 'd-flex'">
-                <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
-                <div class="d-flex ga-4" :class="$vuetify.display.mobile ? '' : 'w-66'">
-                <v-select label="Target Color" :items="colors" v-model="target"></v-select>
-                <v-switch class="w-33" label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
+            <v-expand-transition><div v-show="!$vuetify.display.mobile || expand">
+                <div class="ga-4" :class="$vuetify.display.mobile ? '' : 'd-flex'">
+                    <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
+                    <div class="d-flex ga-4" :class="$vuetify.display.mobile ? '' : 'w-66'">
+                    <v-select label="Target Color" :items="colors" v-model="target"></v-select>
+                    <v-switch class="w-33" label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
+                    </div>
                 </div>
-            </div>
-            <div class="d-flex ga-4">
-                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
-                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
-                <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
-                <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
-            </div>
-                </v-sheet>`
+                <div class="d-flex ga-4">
+                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
+                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
+                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
+                    <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
+                </div>
+            </div></v-expand-transition>
+            <div v-if="$vuetify.display.mobile" @click="expand = !expand" class="d-flex justify-center"><v-icon :icon="expand?'mdi-chevron-up':'mdi-chevron-down'"></v-icon></div>
+        </v-sheet>`
 };
