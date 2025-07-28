@@ -86,9 +86,9 @@ export var app_header =
                     </div>
                 </div>
                 <div class="d-flex ga-4">
-                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" :precision="2" v-model="current[0]"></v-number-input>
-                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[1]"></v-number-input>
-                    <v-number-input :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" :precision="2" v-model="current[2]"></v-number-input>
+                    <v-text-field type="number" :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'L'" :min="delta_L_min" :max="100" :step="0.01" v-model.number="current[0]"></v-text-field>
+                    <v-text-field type="number" :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'a'" :min="delta_min" :max="delta_max" :step="0.01" v-model.number="current[1]"></v-text-field>
+                    <v-text-field type="number" :control-variant="mobile_num_input" :label="(input_delta?'&Delta;':'')+'b'" :min="delta_min" :max="delta_max" :step="0.01" v-model.number="current[2]"></v-text-field>
                     <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
                 </div>
             </div></v-expand-transition>

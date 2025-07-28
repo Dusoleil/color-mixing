@@ -68,9 +68,9 @@ export var accuracy_check =
             </div>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
             <div class="d-flex ga-4">
-                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
-                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
-                <v-number-input :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+                <v-text-field type="number" :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" v-model.number="delta_after_move[0]"></v-text-field>
+                <v-text-field type="number" :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" v-model.number="delta_after_move[1]"></v-text-field>
+                <v-text-field type="number" :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" v-model.number="delta_after_move[2]"></v-text-field>
             </div>
             <v-table v-if="target && current && moving_comp"><tbody>
                 <tr>
