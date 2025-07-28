@@ -61,7 +61,7 @@ export var accuracy_check =
         }
     },
     template:/*html*/`
-        <v-card title="Check Accuracy" class="mx-auto mt-10" :style="{'max-width':'max-content'}"><v-card-text>
+        <v-card title="Check Accuracy" elevation="10" class="mx-auto mt-10" :style="{'max-width':'max-content'}"><v-card-text>
             <div class="d-flex ga-4">
                 <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors" v-model="moving_comp"></v-select>
                 <v-switch prepend-icon="mdi-minus" append-icon="mdi-plus" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
