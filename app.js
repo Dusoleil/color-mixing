@@ -80,11 +80,29 @@ const uix = createVuetify(
             {
                 colors:
                 {
-                    background:"#100E0D",
-                    surface:"#1C1917",
-                    primary:"#7B7263",
-                    secondary:"#B9B2BD",
-                    info:"#35CE8D"
+                    "background":"#100E0D",
+                    "surface":"#1C1917",
+                    "surface-light":"#2D2825",
+                    "surface-bright":"#5A4F49",
+                    "surface-variant":"#B6ABA5",
+                    "primary":"#5E4545",
+                    "primary-darken-1": "#463434",
+                    "secondary":"#665E52",
+                    "secondary-darken-1":"#39342D",
+                    "accent":"#35CE8D",
+                    "on-surface":"#E9EBED",
+                    "on-surface-light":"#E9EBED",
+                    "on-surface-bright":"#E9EBED",
+                    "on-primary":"#E9EBED",
+                    "on-secondary":"#E9EBED",
+                    "on-surface-variant":"#A19AAC",
+                    "on-primary-darken-1":"#A19AAC",
+                    "on-secondary-darken-1":"#A19AAC"
+
+                },
+                variables:
+                {
+                    "border-color":"#E9EBED"
                 }
             }
         }
@@ -96,6 +114,10 @@ const uix = createVuetify(
     },
     defaults:
     {
+        VMain:
+        {
+            class:["ma-auto"]
+        },
         VNumberInput:
         {
             inset:true
