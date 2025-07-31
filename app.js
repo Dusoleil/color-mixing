@@ -152,4 +152,7 @@ const uix = createVuetify(
 
 app.use(store);
 app.use(uix);
-app.mount("#app");
+
+window.onload = function() {
+    app.mount("#app");
+}

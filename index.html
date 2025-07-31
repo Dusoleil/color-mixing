@@ -13,7 +13,7 @@
         <script src="imports.js"></script>
         <script type="module" src="app.js"></script>
         <div id="app">
-            <v-app>
+            <v-app v-cloak>
                 <app-header></app-header>
                 <v-main><v-window class="w-100 h-100" :touch="{left: null, right: null}" v-model="page">
                     <v-window-item :value="0">
