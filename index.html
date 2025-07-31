@@ -15,7 +15,7 @@
         <div id="app">
             <v-app>
                 <app-header></app-header>
-                <v-main><v-window class="ma-auto pa-auto w-100 h-100" v-model="page">
+                <v-main><v-window class="w-100 h-100" :touch="{left: null, right: null}" v-model="page">
                     <v-window-item :value="0">
                         <color-pane></color-pane>
                     </v-window-item>
