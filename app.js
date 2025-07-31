@@ -120,6 +120,35 @@ const uix = createVuetify(
                 {
                     "border-color":"#E9EBED"
                 }
+            },
+            light:
+            {
+                colors:
+                {
+                    "background":"#B6ABA5",
+                    "surface":"#DAD5D2",
+                    "surface-light":"#ECE1DA",
+                    "surface-bright":"#723D46",
+                    "surface-variant":"#472D30",
+                    "primary":"#8D6868",
+                    "primary-darken-1": "#815F5F",
+                    "secondary":"#7D7364",
+                    "secondary-darken-1":"#71685B",
+                    "accent":"#35CE8D",
+                    "on-surface":"#100A04",
+                    "on-surface-light":"#100A04",
+                    "on-surface-bright":"#100A04",
+                    "on-primary":"#100A04",
+                    "on-secondary":"#100A04",
+                    "on-surface-variant":"#13161B",
+                    "on-primary-darken-1":"#13161B",
+                    "on-secondary-darken-1":"#13161B"
+
+                },
+                variables:
+                {
+                    "border-color":"#100A04"
+                }
             }
         }
     },
