@@ -33,6 +33,35 @@ export var color_pane =
             this.color_page = 0;
         }
     },
+    methods:
+    {
+        prev_color()
+        {
+            if(!this.target)
+                return;
+            if(this.color_page != 0)
+            {
+                this.color_page--;
+            }
+            else
+            {
+                this.color_page = this.comp_colors.length + 1;
+            }
+        },
+        next_color()
+        {
+            if(!this.target)
+                return;
+            if(this.color_page == (this.comp_colors.length + 1))
+            {
+                this.color_page = 0;
+            }
+            else
+            {
+                this.color_page++;
+            }
+        }
+    },
     components:
     {
         "color-viewer":color_viewer
@@ -44,7 +73,7 @@ export var color_pane =
                 <color-viewer :detail="DETAIL_LEVEL.BASIC" v-if="target" :color="target"></color-viewer>
                 <color-viewer :detail="DETAIL_LEVEL.FULL" v-for="color in comp_colors" :color="color"></color-viewer>
             </div>
-            <div class="ml-10 w-66 d-sm-none">
+            <div class="ml-10 w-66 d-sm-none" v-touch="{left:()=>next_color(),right:()=>prev_color()}">
                 <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="color_page==0" :color="current"></color-viewer>
                 <color-viewer :detail="DETAIL_LEVEL.BASIC" v-if="color_page==1" :color="target"></color-viewer>
                 <template v-for="(color,idx) in comp_colors"><color-viewer :detail="DETAIL_LEVEL.FULL" v-if="color_page==(idx+2)" :color="color"></color-viewer></template>
