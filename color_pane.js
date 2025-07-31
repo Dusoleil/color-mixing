@@ -38,22 +38,29 @@ export var color_pane =
         "color-viewer":color_viewer
     },
     template:/*html*/`
-        <div class="my-16">
+        <div class="mt-16 mb-4">
             <div class="mx-8 d-none d-sm-flex flex-wrap justify-center ga-16">
                 <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="current" :color="current"></color-viewer>
                 <color-viewer :detail="DETAIL_LEVEL.BASIC" v-if="target" :color="target"></color-viewer>
                 <color-viewer :detail="DETAIL_LEVEL.FULL" v-for="color in comp_colors" :color="color"></color-viewer>
             </div>
-            <v-window class="d-sm-none d-block overflow-visible" v-model="color_page" touch continuous>
-                <v-window-item class="mx-auto" v-if="current" :value="0">
-                    <color-viewer :detail="DETAIL_LEVEL.PARTIAL" :color="current"></color-viewer>
-                </v-window-item>
-                <v-window-item class="mx-auto" v-if="target" :value="1">
-                    <color-viewer :detail="DETAIL_LEVEL.BASIC" :color="target"></color-viewer>
-                </v-window-item>
-                <v-window-item class="mx-auto" v-for="(color,idx) in comp_colors" :value="idx+2">
-                    <color-viewer :detail="DETAIL_LEVEL.FULL" :color="color"></color-viewer>
-                </v-window-item>
-            </v-window>
+            <div class="ml-10 w-66 d-sm-none">
+                <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="color_page==0" :color="current"></color-viewer>
+                <color-viewer :detail="DETAIL_LEVEL.BASIC" v-if="color_page==1" :color="target"></color-viewer>
+                <template v-for="(color,idx) in comp_colors"><color-viewer :detail="DETAIL_LEVEL.FULL" v-if="color_page==(idx+2)" :color="color"></color-viewer></template>
+            </div>
+            <div class="d-sm-none position-absolute top-0 right-0 h-100 pt-4 pb-16 pr-3">
+                <v-slide-group class="h-100" v-model="color_page" selected-class="border border-lg border-opacity-75" direction="vertical" prev-icon="mdi-chevron-up" next-icon="mdi-chevron-down" mandatory show-arrows>
+                    <v-slide-group-item v-if="current" :key="0" v-slot="{toggle, selectedClass}">
+                        <v-card class="my-2" :class="selectedClass" :color="current.hex" height="50" width="50" @click="toggle"></v-card>
+                    </v-slide-group-item>
+                    <v-slide-group-item v-if="target" :key="1" v-slot="{toggle, selectedClass}">
+                        <v-card class="my-2" :class="selectedClass" :color="target.hex" height="50" width="50" @click="toggle"></v-card>
+                    </v-slide-group-item>
+                    <v-slide-group-item v-for="(color,idx) in comp_colors" :key="2+idx" v-slot="{toggle, selectedClass}">
+                        <v-card class="my-2" :class="selectedClass" :color="color.hex" height="50" width="50" @click="toggle"></v-card>
+                    </v-slide-group-item>
+                </v-slide-group>
+            </div>
         </div>`
 };
