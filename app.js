@@ -96,8 +96,8 @@ const uix = createVuetify(
             {
                 colors:
                 {
-                    "background":"#1C1917",
-                    "surface":"#100E0D",
+                    "background":"#221E1C",
+                    "surface":"#161412",
                     "surface-light":"#2D2825",
                     "surface-bright":"#5A4F49",
                     "surface-variant":"#B6ABA5",
