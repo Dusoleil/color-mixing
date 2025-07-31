@@ -26,11 +26,11 @@ export var color_viewer =
         "swatch":swatch
     },
     template:/*html*/`
-        <v-card elevation="10" class="mt-8 overflow-visible" :style="$vuetify.display.mobile?{'min-width':'75%'}:''">
+        <v-card elevation="10" class="d-flex flex-column mt-8 overflow-visible" :style="$vuetify.display.mobile?{'min-width':'75%'}:''">
             <swatch :color="color" class="ml-auto" :style="swatch_style"></swatch>
             <v-card-title>{{color.name}}</v-card-title>
             <v-card-subtitle>Lab({{color.L.toFixed(2)}}, {{color.a.toFixed(2)}}, {{color.b.toFixed(2)}})</v-card-subtitle>
-            <v-card-text class="d-flex flex-column justify-center">
+            <v-card-text class="justify-center">
                 <color-detail :detail="detail" :color="color"></color-detail>
             </v-card-text>
         </v-card>`
