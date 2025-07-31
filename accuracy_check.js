@@ -60,6 +60,11 @@ export var accuracy_check =
             this.moving_comp = this.comp_colors[0].value;
         }
     },
+    mounted()
+    {
+        if(this.comp_colors.length > 0)
+            this.moving_comp = this.comp_colors[0].value;
+    },
     template:/*html*/`
         <v-card title="Check Accuracy" elevation="10" class="mx-auto mt-10" :style="{'max-width':'max-content'}"><v-card-text>
             <div class="d-flex ga-4">
