@@ -92,6 +92,6 @@ export var app_header =
                     <v-switch label="Use Deltas" v-model="input_delta"></v-switch>
                 </div>
             </div></v-expand-transition>
-            <div v-if="$vuetify.display.mobile" @click="expand = !expand" class="d-flex justify-center"><v-icon :icon="expand?'mdi-chevron-up':'mdi-chevron-down'"></v-icon></div>
+            <div v-if="$vuetify.display.mobile" @click="expand = !expand" v-touch="{up:()=>expand=false,down:()=>expand=true}" class="d-flex justify-center"><v-icon :icon="expand?'mdi-chevron-up':'mdi-chevron-down'"></v-icon></div>
         </v-sheet>`
 };
