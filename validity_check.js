@@ -58,7 +58,7 @@ export var validity_check =
         }
     },
     template:/*html*/`
-        <v-card title="Check Validity" elevation="10" class="mx-auto mt-10" :style="{'max-width':'75dvw'}"><v-card-text>
+        <v-card title="Check Validity" elevation="10" class="mx-auto mt-10 mb-4" :style="{'max-width':'75dvw'}"><v-card-text>
             <template v-if="comp_colors.length < 1">
                 <v-label>No Component Colors to Work With</v-label>
             </template>
