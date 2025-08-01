@@ -8,7 +8,7 @@ import {app_header} from "app_header"
 import {color_pane} from "color_pane"
 import {accuracy_check} from "accuracy_check"
 
-const store = createStore(
+const store =
 {
     state()
     {return{
@@ -62,47 +62,9 @@ const store = createStore(
             state.current_color = new Color("Current Color", origin);
         }
     }
-})
+};
 
-const app = createApp(
-{
-    data()
-    {return{
-        page:0,
-        open:false
-    }},
-    computed:
-    {
-        nav_main_size()
-        {
-            return this.$vuetify.display.mobile ? "default" : "large";
-        },
-        nav_dial_size()
-        {
-            return this.$vuetify.display.mobile ? "small" : "default";
-        }
-    },
-    components:
-    {
-        "app-header":app_header,
-        "color-pane":color_pane,
-        "accuracy-check":accuracy_check
-    },
-    mounted()
-    {
-        if(window.db)
-        {
-            const request = db.transaction("files",'readonly').objectStore("files").get("colorfile");
-            request.onsuccess = (e) =>
-            {
-                if(e.target.result)
-                    this.$store.commit("load_color_file",e.target.result);
-            }
-        }
-    }
-});
-
-const uix = createVuetify(
+const uix =
 {
     theme:
     {
@@ -194,12 +156,48 @@ const uix = createVuetify(
             striped:"odd"
         }
     }
+};
+
+const app = createApp(
+{
+    data()
+    {return{
+        page:0,
+        open:false
+    }},
+    computed:
+    {
+        nav_main_size()
+        {
+            return this.$vuetify.display.mobile ? "default" : "large";
+        },
+        nav_dial_size()
+        {
+            return this.$vuetify.display.mobile ? "small" : "default";
+        }
+    },
+    methods:
+    {
+        toggle_theme()
+        {
+            this.$vuetify.theme.toggle();
+            if(window.db)
+            {
+                const settings = db.transaction("settings",'readwrite').objectStore("settings");
+                settings.put(this.$vuetify.theme.name,"theme");
+            }
+        }
+    },
+    components:
+    {
+        "app-header":app_header,
+        "color-pane":color_pane,
+        "accuracy-check":accuracy_check
+    }
 });
 
-app.use(store);
-app.use(uix);
-
 window.onload = async function() {
+    let vuex = createStore(store);
     try
     {
         window.db = await new Promise((resolve,reject) =>
@@ -211,12 +209,35 @@ window.onload = async function() {
             {
                 const db = e.target.result;
                 const filestore = db.createObjectStore("files");
+                const settings = db.createObjectStore("settings");
             };
+        });
+        await new Promise((resolve) =>
+        {
+            const settings = window.db.transaction("settings","readonly").objectStore("settings");
+            settings.get('theme').onsuccess = (e) =>
+            {
+                if(e.target.result)
+                    uix.theme.defaultTheme = e.target.result;
+                resolve();
+            }
+        });
+        await new Promise((resolve) =>
+        {
+            const loadcolors = db.transaction("files",'readonly').objectStore("files").get("colorfile");
+            loadcolors.onsuccess = (e) =>
+            {
+                if(e.target.result)
+                    vuex.commit("load_color_file",e.target.result);
+                resolve();
+            }
         });
     }
     catch(e)
     {
         console.error(`DB Error: ${e?.message}`);
     }
+    app.use(vuex);
+    app.use(createVuetify(uix));
     app.mount("#app");
 }
