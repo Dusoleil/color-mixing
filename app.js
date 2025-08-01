@@ -16,8 +16,7 @@ const store =
         color_map:{},
         current_color:null,
         target_color:null,
-        comp_colors:[],
-        use_linear:true
+        comp_colors:[]
     }},
     mutations:
     {
@@ -49,10 +48,6 @@ const store =
                 state.target_color = null;
                 state.comp_colors = [];
             }
-        },
-        set_linear(state,use)
-        {
-            state.use_linear = use;
         },
         set_current(state,val)
         {

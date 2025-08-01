@@ -43,10 +43,6 @@ export var app_header =
         pick_colors(e)
         {
             this.$store.commit("load_color_file",e.target.files[0]);
-        },
-        use_linear(e)
-        {
-            this.$store.commit("set_linear",e.target.checked);
         }
     },
     watch:
@@ -80,9 +76,8 @@ export var app_header =
             <v-expand-transition><div v-show="!$vuetify.display.mobile || expand">
                 <div class="ga-4" :class="$vuetify.display.mobile ? '' : 'd-flex'">
                     <v-file-input label="Colors File" accept=".json" @change="pick_colors"></v-file-input>
-                    <div class="d-flex ga-4" :class="$vuetify.display.mobile ? '' : 'w-66'">
+                    <div class="d-flex ga-4" :class="$vuetify.display.mobile ? '' : 'w-50'">
                     <v-select label="Target Color" :items="colors" v-model="target"></v-select>
-                    <v-switch class="w-33" label="Use Linear Space" @change="use_linear" :model-value="true"></v-switch>
                     </div>
                 </div>
                 <div class="d-flex ga-4">
