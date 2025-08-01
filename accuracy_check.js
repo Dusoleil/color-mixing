@@ -68,6 +68,13 @@ export var accuracy_check =
             this.moving_comp = this.comp_colors[0].value;
         }
     },
+    methods:
+    {
+        load_into_current()
+        {
+            this.$store.commit("set_current",{Lab:this.delta_after_move,delta:true});
+        }
+    },
     mounted()
     {
         if(this.comp_colors.length > 0)
@@ -85,6 +92,9 @@ export var accuracy_check =
                 <v-text-field type="number" :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" v-model.number="delta_after_move[1]"></v-text-field>
                 <v-text-field type="number" :style="{'min-width':'8ch'}" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" v-model.number="delta_after_move[2]"></v-text-field>
             </div>
+            <v-btn color="primary" class="mb-4" @click="load_into_current">
+                Load This Color Into Current
+            </v-btn>
             <v-table v-if="target && current && moving_comp"><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
