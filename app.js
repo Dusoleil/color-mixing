@@ -23,9 +23,14 @@ const store = createStore(
     {
         load_color_file(state,file)
         {
+            if(window.db)
+            {
+                const filestore = db.transaction("files", 'readwrite').objectStore("files");
+                filestore.put(file,"colorfile");
+            }
             var reader = new FileReader();
             reader.readAsText(file,'UTF-8');
-            reader.onload = readerEvent =>
+            reader.onload = (readerEvent) =>
             {
                 let obj = JSON.parse(readerEvent.target.result);
                 state.colors = Object.values(obj.colors).reduce((acc,col) => {acc[col.id] = new Color(col.name,vec3.fromValues(col.L,col.a,col.b));return acc},{});
@@ -82,6 +87,18 @@ const app = createApp(
         "app-header":app_header,
         "color-pane":color_pane,
         "accuracy-check":accuracy_check
+    },
+    mounted()
+    {
+        if(window.db)
+        {
+            const request = db.transaction("files",'readonly').objectStore("files").get("colorfile");
+            request.onsuccess = (e) =>
+            {
+                if(e.target.result)
+                    this.$store.commit("load_color_file",e.target.result);
+            }
+        }
     }
 });
 
@@ -182,6 +199,24 @@ const uix = createVuetify(
 app.use(store);
 app.use(uix);
 
-window.onload = function() {
+window.onload = async function() {
+    try
+    {
+        window.db = await new Promise((resolve,reject) =>
+        {
+            const dbrequest = window.indexedDB.open("db",1);
+            dbrequest.onerror = (e)=>{reject(e.target.error);};
+            dbrequest.onsuccess = (e)=>{resolve(e.target.result);};
+            dbrequest.onupgradeneeded = (e) =>
+            {
+                const db = e.target.result;
+                const filestore = db.createObjectStore("files");
+            };
+        });
+    }
+    catch(e)
+    {
+        console.error(`DB Error: ${e?.message}`);
+    }
     app.mount("#app");
 }
