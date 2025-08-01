@@ -13,7 +13,8 @@ const import_map =
         color_viewer:"./color_viewer.js",
         color_detail:"./color_detail.js",
         swatch:"./swatch.js",
-        accuracy_check:"./accuracy_check.js"
+        accuracy_check:"./accuracy_check.js",
+        validity_check:"./validity_check.js"
     }
 }
 
