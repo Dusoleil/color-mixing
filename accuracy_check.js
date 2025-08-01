@@ -44,6 +44,14 @@ export var accuracy_check =
             vec3.normalize(a,a);
             return a;
         },
+        old_delta_e()
+        {
+            return vec3.distance(this.current.Lab,this.target.Lab);
+        },
+        new_delta_e()
+        {
+            return vec3.distance(this.color_after_move.Lab,this.target.Lab);
+        },
         angle()
         {
             return vec3.angle(this.expected_move,this.actual_move);
@@ -79,16 +87,12 @@ export var accuracy_check =
             </div>
             <v-table v-if="target && current && moving_comp"><tbody>
                 <tr>
-                    <td>Before:</td>
-                    <td>{{current.X.toFixed(2)}}</td>
-                    <td>{{current.Y.toFixed(2)}}</td>
-                    <td>{{current.Z.toFixed(2)}}</td>
+                    <td>Old &Delta;E:</td>
+                    <td colspan="3">{{old_delta_e.toFixed(4)}}</td>
                 </tr>
                 <tr>
-                    <td>After:</td>
-                    <td>{{color_after_move.X.toFixed(2)}}</td>
-                    <td>{{color_after_move.Y.toFixed(2)}}</td>
-                    <td>{{color_after_move.Z.toFixed(2)}}</td>
+                    <td>New &Delta;E:</td>
+                    <td colspan="3">{{new_delta_e.toFixed(4)}}</td>
                 </tr>
                 <tr>
                     <td>Expected &Delta;:</td>
@@ -103,8 +107,12 @@ export var accuracy_check =
                     <td>{{actual_move[2].toFixed(2)}}</td>
                 </tr>
                 <tr>
-                    <td>Accuracy &Theta;:</td>
+                    <td>Accuracy &Theta; (Rad):</td>
                     <td colspan="3">{{angle.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy &Theta; (Deg):</td>
+                    <td colspan="3">{{(angle*(180/Math.PI)).toFixed(4)}}</td>
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>`
