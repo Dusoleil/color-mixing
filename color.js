@@ -10,9 +10,15 @@ export class Color
         c[1] = this.#clamp(-127,c[1],128);
         c[2] = this.#clamp(-127,c[2],128);
         this.Lab = c;
-        this.XYZ = this.#lab_to_xyz(this.Lab);
-        this.RGB = this.#xyz_to_rgb(this.XYZ);
-        this.hex = this.#rgb_to_hex(this.RGB);
+        this.XYZ = Color.#lab_to_xyz(this.Lab);
+        this.RGB = Color.#xyz_to_rgb(this.XYZ);
+        this.hex = Color.#rgb_to_hex(this.RGB);
+    }
+
+    static from_xyz(name,xyz)
+    {
+        let lab = Color.#xyz_to_lab(vec3.clone(xyz));
+        return new Color(name,lab);
     }
 
     get L(){return this.Lab[0];}
@@ -26,7 +32,7 @@ export class Color
     get B(){return this.RGB[2];}
 
     //https://rgbatohex.com/tools/lab-to-xyz
-    #lab_to_xyz(color)
+    static #lab_to_xyz(color)
     {
         const [L,a,b] = color;
 
@@ -57,7 +63,7 @@ export class Color
     }
 
     //https://rgbatohex.com/tools/xyz-to-rgb
-    #xyz_to_rgb(color)
+    static #xyz_to_rgb(color)
     {
         const [x,y,z] = color;
 
@@ -88,7 +94,7 @@ export class Color
         return vec3.clone(rgbFinal);
     }
 
-    #rgb_to_hex(color)
+    static #rgb_to_hex(color)
     {
         const [r,g,b] = color;
         function to_hex(val)
@@ -96,6 +102,34 @@ export class Color
             return ("0"+val.toString(16)).slice(-2);
         }
         return "#"+to_hex(r)+to_hex(g)+to_hex(b);
+    }
+
+    //https://rgbatohex.com/tools/xyz-to-lab
+    static #xyz_to_lab(color)
+    {
+        const [x,y,z] = color;
+
+        // D65 illuminant white point
+        const xn = 95.047, yn = 100.000, zn = 108.883;
+
+        // Current XYZ values
+        const xNorm = x / xn;
+        const yNorm = y / yn;
+        const zNorm = z / zn;
+
+        // Apply nonlinear transformation
+        const f = (t) => t > 0.008856 ? Math.pow(t, 1/3) : (7.787 * t + 16/116);
+
+        const fx = f(xNorm);
+        const fy = f(yNorm);
+        const fz = f(zNorm);
+
+        // Calculate LAB values
+        const L = 116 * fy - 16;
+        const a = 500 * (fx - fy);
+        const b = 200 * (fy - fz);
+
+        return vec3.fromValues(L,a,b);
     }
 
     #clamp(min,val,max)
