@@ -5,12 +5,34 @@ import {vec3} from "glMatrix"
 
 export var validity_check =
 {
+    data()
+    {return{
+        old_sp:0
+    }},
     created()
     {
         this.DETAIL_LEVEL = DETAIL_LEVEL;
     },
     computed:
     {
+        new_sp()
+        {
+            let sp_ratio = 51/this.old_sp;
+            let tar_bary_1 = this.ratio_target_along_line;
+            if(this.old_sp <= 0) return tar_bary_1;
+            if(tar_bary_1 >= 1) return 51;
+            if(tar_bary_1 <= 0) return 0;
+            let tar_bary_0 = 1-tar_bary_1;
+            let tar_bary_ratio = tar_bary_0/tar_bary_1;
+            let cur_bary_1 = this.ratio_current_along_line;
+            if(cur_bary_1 >= 1) return tar_bary_1;
+            if(cur_bary_1 <= 0) return tar_bary_1;
+            let cur_bary_0 = 1-cur_bary_1;
+            let cur_bary_ratio = cur_bary_0/cur_bary_1;
+            let x = sp_ratio/cur_bary_ratio;
+            let new_ratio = x*tar_bary_ratio;
+            return 51/new_ratio;
+        },
         target()
         {
             return this.$store.state.target_color;
@@ -147,6 +169,9 @@ export var validity_check =
                     With only these two components, the line from {{target.name}} to {{current.name}} should be parallel to the line from {{comp_colors[0].name}} to {{comp_colors[1].name}}.
                     <v-divider class="border-opacity-0"></v-divider>
                     The angle between these lines is {{angle_against_line.toFixed(4)}} ({{rad_to_deg(angle_against_line).toFixed(4)}}&deg;).
+                    <v-divider class="border-opacity-0"></v-divider>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[1].name+' SP'" v-model.number="old_sp"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
                 <template v-if="comp_colors.length > 2">
