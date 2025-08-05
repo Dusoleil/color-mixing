@@ -11,7 +11,7 @@ export var plot =
 {
     data()
     {return{
-        renderer:WebGL.isWebGL2Available()?new THREE.WebGLRenderer():new SVGRenderer(),
+        renderer:WebGL.isWebGL2Available()?new THREE.WebGLRenderer({antialias:true}):new SVGRenderer(),
         camera:new THREE.PerspectiveCamera(75,1,0.1,1000),
         pivot:new THREE.Object3D(),
         pivot_x:0,
