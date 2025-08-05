@@ -17,7 +17,8 @@ const store =
         color_map:{},
         current_color:null,
         target_color:null,
-        comp_colors:[]
+        comp_colors:[],
+        theme_name:null
     }},
     mutations:
     {
@@ -56,6 +57,10 @@ const store =
             if(val.delta && state.target_color) origin = vec3.clone(state.target_color.Lab);
             vec3.add(origin,origin,val.Lab);
             state.current_color = new Color("Current Color", origin);
+        },
+        update_theme(state,name)
+        {
+            state.theme_name = name;
         }
     }
 };
@@ -177,6 +182,7 @@ const app = createApp(
         toggle_theme()
         {
             this.$vuetify.theme.toggle();
+            this.$store.commit("update_theme",this.$vuetify.theme.name);
             if(window.db)
             {
                 const settings = db.transaction("settings",'readwrite').objectStore("settings");

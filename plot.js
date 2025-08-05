@@ -35,6 +35,10 @@ export var plot =
         {
             return this.$store.state.comp_colors;
         },
+        theme()
+        {
+            return this.$store.state.theme_name;
+        }
     },
     watch:
     {
@@ -44,6 +48,11 @@ export var plot =
         },
         current()
         {
+            this.redraw();
+        },
+        theme()
+        {
+            this.renderer.setClearColor(this.$vuetify.theme.current.colors.surface);
             this.redraw();
         }
     },
