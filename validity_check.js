@@ -1,3 +1,4 @@
+import {plot} from "plot"
 import {color_viewer} from "color_viewer"
 import {DETAIL_LEVEL} from "color_detail"
 import {Color} from "color"
@@ -138,10 +139,12 @@ export var validity_check =
     },
     components:
     {
+        "plot":plot,
         "color-viewer":color_viewer
     },
     template:/*html*/`
         <div class="mx-auto mt-10 mb-4" :style="{'max-width':'75dvw'}">
+            <plot v-if="comp_colors.length >= 1"></plot>
             <v-card title="Check Validity" elevation="10"><v-card-text>
                 <template v-if="comp_colors.length < 1">
                     <v-label>No Component Colors to Work With</v-label>
