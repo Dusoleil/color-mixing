@@ -21,7 +21,7 @@ export var plot =
             if(this.$vuetify.display.mobile)
                 this.renderer.setSize(250,250);
             else
-                this.renderer.setSize(500,500);
+                this.renderer.setSize(400,400);
             this.renderer.render(this.$scene,this.camera);
         })
     }},
@@ -86,7 +86,7 @@ export var plot =
             let zoom_factor = 1.1;
             let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
             this.pivot.position.set(origin[0],origin[1],origin[2]);
-            this.camera.position.set(0,0,diameter+5);
+            this.camera.position.set(0,0,((max_z-min_z)+diameter)/2);
             return [origin,diameter];
         },
         redraw()
@@ -180,7 +180,7 @@ export var plot =
         draw_compass(origin,diameter)
         {
             if(WebGL.isWebGL2Available())
-                diameter -= 0.1;
+                diameter -= 0.5;
             const radius = (diameter / 2);
             const vorigin = new THREE.Vector3(origin[0],origin[1],origin[2]);
             const corner = vorigin.clone().sub(new THREE.Vector3(radius,radius,radius));
@@ -272,7 +272,7 @@ export var plot =
     created()
     {
         getCurrentInstance().proxy.$scene = new THREE.Scene();
-        this.renderer.setSize(500,500);
+        this.renderer.setSize(400,400);
         this.renderer.setClearColor(this.$vuetify.theme.current.colors.surface);
         this.pivot.add(this.camera);
         this.camera.position.set(0,0,300);
