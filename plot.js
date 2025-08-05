@@ -191,6 +191,7 @@ export var plot =
         };
         let spin = (e)=>
         {
+            e.preventDefault();
             let [cx,cy] = spinpos(e);
             let dx = cx-x;
             let dy = cy-y;
