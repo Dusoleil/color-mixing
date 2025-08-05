@@ -11,7 +11,6 @@ export var plot =
         pivot:new THREE.Object3D(),
         pivot_x:0,
         pivot_y:0,
-        background_box:null,
         obv:new ResizeObserver((entries) =>
         {
             if(this.$vuetify.display.mobile)
@@ -58,14 +57,42 @@ export var plot =
     },
     methods:
     {
+        zoom()
+        {
+            let min_x = this.current.a;
+            let max_x = this.current.a;
+            let min_y = this.current.L;
+            let max_y = this.current.L;
+            let min_z = this.current.b;
+            let max_z = this.current.b;
+            function bounds(c)
+            {
+                if(c.a < min_x) min_x = c.a;
+                if(c.a > max_x) max_x = c.a;
+                if(c.L < min_y) min_y = c.L;
+                if(c.L > max_y) max_y = c.L;
+                if(c.b < min_z) min_z = c.b;
+                if(c.b > max_z) max_z = c.b;
+            }
+            bounds(this.target);
+            for(const col of this.comp_colors)
+                bounds(col);
+            let origin = [(min_x+max_x)/2,(min_y+max_y)/2,-(min_z+max_z)/2];
+            let zoom_factor = 1.1;
+            let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
+            this.pivot.position.set(origin[0],origin[1],origin[2]);
+            this.camera.position.set(0,0,diameter+5);
+            return [origin,diameter];
+        },
         redraw()
         {
             this.scene.clear();
             this.scene.add(this.pivot);
-            this.draw_background_box();
             this.plot_current();
             this.plot_target();
             this.plot_comp();
+            let [origin,diameter] = this.zoom();
+            this.draw_background_box(origin,diameter);
             this.renderer.render(this.scene,this.camera);
         },
         plot_hull(h)
@@ -109,7 +136,7 @@ export var plot =
             const vertices = [];
             vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
             const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-            const material = new THREE.PointsMaterial({color:p[3], size:10.0});
+            const material = new THREE.PointsMaterial({color:p[3], size:2.0});
             const points = new THREE.Points(geometry, material);
             this.scene.add( points );
         },
@@ -121,11 +148,11 @@ export var plot =
         {
             this.plot_point([this.target.a,this.target.L,-this.target.b,this.target.hex]);
         },
-        draw_background_box()
+        draw_background_box(origin,diameter)
         {
             const sub_divide = 6;
             const sub_divide_sq = sub_divide*sub_divide;
-            const cube_geometry = new THREE.BoxGeometry(260,260,260,sub_divide,sub_divide,sub_divide);
+            const cube_geometry = new THREE.BoxGeometry(diameter,diameter,diameter,sub_divide,sub_divide,sub_divide);
             cube_geometry.groups = [];
             for(let i = 0; i<6*sub_divide_sq;i++)
             {
@@ -139,8 +166,9 @@ export var plot =
                 new THREE.MeshBasicMaterial({ color: 0xffffff , side:THREE.DoubleSide}),
                 new THREE.MeshBasicMaterial({ color: 0xbbbbbb , side:THREE.DoubleSide})
             ];
-            this.background_box = new THREE.Mesh(cube_geometry,cube_materials);
-            this.scene.add(this.background_box);
+            let background_box = new THREE.Mesh(cube_geometry,cube_materials);
+            background_box.position.set(origin[0],origin[1],origin[2]);
+            this.scene.add(background_box);
         },
         spin_pivot(x,y)
         {
