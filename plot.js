@@ -1,6 +1,10 @@
 import * as THREE from "three"
 import WebGL from 'three/addons/capabilities/WebGL.js'
 import {SVGRenderer} from 'three/addons/renderers/SVGRenderer.js'
+import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js'
+import {LineMaterial} from 'three/addons/lines/LineMaterial.js'
+import {LineSegments2} from 'three/addons/lines/LineSegments2.js'
+import {Color} from "color"
 import { getCurrentInstance } from 'vue'
 
 export var plot =
@@ -94,6 +98,7 @@ export var plot =
             this.plot_comp();
             let [origin,diameter] = this.zoom();
             this.draw_background_box(origin,diameter);
+            this.draw_compass(origin,diameter);
             this.renderer.render(this.$scene,this.camera);
         },
         plot_hull(h)
@@ -164,12 +169,81 @@ export var plot =
                 cube_geometry.addGroup(i*6,6,idx);
             }
             const cube_materials = [
-                new THREE.MeshBasicMaterial({ color: 0xffffff , side:THREE.DoubleSide}),
+                new THREE.MeshBasicMaterial({ color: 0xdddddd , side:THREE.DoubleSide}),
                 new THREE.MeshBasicMaterial({ color: 0xbbbbbb , side:THREE.DoubleSide})
             ];
             let background_box = new THREE.Mesh(cube_geometry,cube_materials);
             background_box.position.set(origin[0],origin[1],origin[2]);
-            this.scene.add(background_box);
+            background_box.renderOrder = -2;
+            this.$scene.add(background_box);
+        },
+        draw_compass(origin,diameter)
+        {
+            if(WebGL.isWebGL2Available())
+                diameter -= 0.1;
+            const radius = (diameter / 2);
+            const vorigin = new THREE.Vector3(origin[0],origin[1],origin[2]);
+            const corner = vorigin.clone().sub(new THREE.Vector3(radius,radius,radius));
+            const edge_x = corner.clone().add(new THREE.Vector3(diameter,0,0));
+            const edge_y = corner.clone().add(new THREE.Vector3(0,diameter,0));
+            const edge_z = corner.clone().add(new THREE.Vector3(0,0,diameter));
+            if(WebGL.isWebGL2Available())
+            {
+                const vertices = [];
+                const colors = [];
+                vertices.push(corner.x,corner.y,corner.z);
+                const green = new THREE.Color(new Color("",[50,-127,128]).hex);
+                colors.push(green.r,green.g,green.b);
+                vertices.push(edge_x.x,edge_x.y,edge_x.z);
+                const red = new THREE.Color(new Color("",[0,128,0]).hex);
+                colors.push(red.r,red.g,red.b);
+                vertices.push(corner.x,corner.y,corner.z);
+                const black = new THREE.Color(new Color("",[0,0,0]).hex);
+                colors.push(black.r,black.g,black.b);
+                vertices.push(edge_y.x,edge_y.y,edge_y.z);
+                const white = new THREE.Color(new Color("",[100,0,0]).hex);
+                colors.push(white.r,white.g,white.b);
+                vertices.push(corner.x,corner.y,corner.z);
+                const yellow = new THREE.Color(new Color("",[100,0,128]).hex);
+                colors.push(yellow.r,yellow.g,yellow.b);
+                vertices.push(edge_z.x,edge_z.y,edge_z.z);
+                const blue = new THREE.Color(new Color("",[50,0,-127]).hex);
+                colors.push(blue.r,blue.g,blue.b);
+                const geometry = new LineSegmentsGeometry();
+                geometry.setPositions(vertices);
+                geometry.setColors(colors);
+                const material = new LineMaterial({vertexColors: true, linewidth:6});
+                const compass = new LineSegments2(geometry,material);
+                this.$scene.add(compass);
+            }
+            else
+            {
+                const scene = this.$scene;
+                function draw_line(p1,p2,c)
+                {
+                    const vertices = [];
+                    vertices.push(p1.x,p1.y,p1.z);
+                    vertices.push(p2.x,p2.y,p2.z);
+                    const geometry = new THREE.BufferGeometry();
+                    geometry.setAttribute('position',new THREE.BufferAttribute(new Float32Array(vertices),3));
+                    const material = new THREE.LineBasicMaterial({color:c,linewidth:4});
+                    const line = new THREE.Line(geometry,material);
+                    line.renderOrder = -1;
+                    scene.add(line);
+                }
+                const green = new THREE.Color(new Color("",[50,-127,128]).hex);
+                draw_line(corner,corner.clone().add(new THREE.Vector3(radius,0,0)),green);
+                const red = new THREE.Color(new Color("",[0,128,0]).hex);
+                draw_line(corner.clone().add(new THREE.Vector3(radius,0,0)),edge_x,red);
+                const black = new THREE.Color(new Color("",[0,0,0]).hex);
+                draw_line(corner,corner.clone().add(new THREE.Vector3(0,radius,0)),black);
+                const white = new THREE.Color(new Color("",[100,0,0]).hex);
+                draw_line(corner.clone().add(new THREE.Vector3(0,radius,0)),edge_y,white);
+                const yellow = new THREE.Color(new Color("",[100,0,128]).hex);
+                draw_line(corner,corner.clone().add(new THREE.Vector3(0,0,radius)),yellow);
+                const blue = new THREE.Color(new Color("",[50,0,-127]).hex);
+                draw_line(corner.clone().add(new THREE.Vector3(0,0,radius)),edge_z,blue);
+            }
         },
         spin_pivot(x,y)
         {
