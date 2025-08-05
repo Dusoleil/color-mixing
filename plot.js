@@ -1,12 +1,13 @@
 import * as THREE from "three"
+import WebGL from 'three/addons/capabilities/WebGL.js'
 import {SVGRenderer} from 'three/addons/renderers/SVGRenderer.js'
+import { getCurrentInstance } from 'vue'
 
 export var plot =
 {
     data()
     {return{
-        renderer:new SVGRenderer(),
-        scene:new THREE.Scene(),
+        renderer:WebGL.isWebGL2Available()?new THREE.WebGLRenderer():new SVGRenderer(),
         camera:new THREE.PerspectiveCamera(75,1,0.1,1000),
         pivot:new THREE.Object3D(),
         pivot_x:0,
@@ -17,7 +18,7 @@ export var plot =
                 this.renderer.setSize(250,250);
             else
                 this.renderer.setSize(500,500);
-            this.renderer.render(this.scene,this.camera);
+            this.renderer.render(this.$scene,this.camera);
         })
     }},
     computed:
@@ -86,14 +87,14 @@ export var plot =
         },
         redraw()
         {
-            this.scene.clear();
-            this.scene.add(this.pivot);
+            this.$scene.clear();
+            this.$scene.add(this.pivot);
             this.plot_current();
             this.plot_target();
             this.plot_comp();
             let [origin,diameter] = this.zoom();
             this.draw_background_box(origin,diameter);
-            this.renderer.render(this.scene,this.camera);
+            this.renderer.render(this.$scene,this.camera);
         },
         plot_hull(h)
         {
@@ -121,7 +122,7 @@ export var plot =
                 const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
                 const material = new THREE.LineBasicMaterial({color:0x000000});
                 const line = new THREE.Line(geometry,material);
-                this.scene.add(line);
+                this.$scene.add(line);
             }
         },
         plot_comp()
@@ -138,7 +139,7 @@ export var plot =
             const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
             const material = new THREE.PointsMaterial({color:p[3], size:2.0});
             const points = new THREE.Points(geometry, material);
-            this.scene.add( points );
+            this.$scene.add( points );
         },
         plot_current()
         {
@@ -191,11 +192,12 @@ export var plot =
             this.pivot_y += y;
             this.pivot.rotateOnWorldAxis(new THREE.Vector3(0,1,0),x);
             this.pivot.rotateX(y);
-            this.renderer.render(this.scene,this.camera);
+            this.renderer.render(this.$scene,this.camera);
         }
     },
     created()
     {
+        getCurrentInstance().proxy.$scene = new THREE.Scene();
         this.renderer.setSize(500,500);
         this.renderer.setClearColor(this.$vuetify.theme.current.colors.surface);
         this.pivot.add(this.camera);
