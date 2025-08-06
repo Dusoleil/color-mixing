@@ -93,9 +93,9 @@ export var validity_check =
             if(h.length == 1)
                 return proj.barycentric_point(p.XYZ,h[0].XYZ);
             if(h.length == 2)
-                return proj.barycentric_line_bounded(p.XYZ,[h[0].XYZ,h[1].XYZ]);
+                return proj.barycentric_line_bounded(p.XYZ,h[0].XYZ,h[1].XYZ);
             if(h.length >= 3)
-                return proj.barycentric_triangle_bounded(p.XYZ,[h[0].XYZ,h[1].XYZ,h[2].XYZ]);
+                return proj.barycentric_triangle_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
         }
     },
     components:

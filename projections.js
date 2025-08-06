@@ -33,18 +33,18 @@ export function project_onto_line(p,l1,l2)
     return proj;
 }
 
-export function barycentric_line(p,l)
+export function barycentric_line(p,l1,l2)
 {
-    let scalar = scalar_project_onto_line(p,l[0],l[1]);
-    let dist = point_to_point_distance(l[0],l[1]);
+    let scalar = scalar_project_onto_line(p,l1,l2);
+    let dist = point_to_point_distance(l1,l2);
     let b1 = scalar / dist;
     let b0 = 1 - b1;
     return [b0,b1];
 }
 
-export function barycentric_line_bounded(p,l)
+export function barycentric_line_bounded(p,l1,l2)
 {
-    let bary = barycentric_line(p,l);
+    let bary = barycentric_line(p,l1,l2);
     function clamp(min,val,max)
     {
         return Math.max(min,Math.min(val,max));
@@ -54,7 +54,7 @@ export function barycentric_line_bounded(p,l)
 
 export function project_onto_line_segment(p,l1,l2)
 {
-    let bary = barycentric_line_bounded(p,[l1,l2])[0];
+    let bary = barycentric_line_bounded(p,l1,l2)[0];
     if(bary >= 1) return l1;
     if(bary <= 0) return l2;
     return project_onto_line(p,l1,l2);
@@ -116,9 +116,9 @@ export function project_onto_plane(p,t1,t2,t3)
     return projection;
 }
 
-export function barycentric_triangle(p,t)
+export function barycentric_triangle(p,t1,t2,t3)
 {
-    let rotation = get_rotation_from_triangle_to_xy(t[0],t[1],t[2]);
+    let rotation = get_rotation_from_triangle_to_xy(t1,t2,t3);
     function project_xy(p)
     {
         let projection = vec3.create();
@@ -127,9 +127,9 @@ export function barycentric_triangle(p,t)
         return projection;
     }
     let p_2d = project_xy(p);
-    let t1_2d = project_xy(t[0]);
-    let t2_2d = project_xy(t[1]);
-    let t3_2d = project_xy(t[2]);
+    let t1_2d = project_xy(t1);
+    let t2_2d = project_xy(t2);
+    let t3_2d = project_xy(t3);
     let lin_eq_left = mat3.fromValues(t1_2d[0],t1_2d[1],1,t2_2d[0],t2_2d[1],1,t3_2d[0],t3_2d[1],1);
     let lin_eq_right = vec3.fromValues(p_2d[0],p_2d[1],1);
     let inv_left = mat3.create();
@@ -139,9 +139,9 @@ export function barycentric_triangle(p,t)
     return solution;
 }
 
-export function barycentric_triangle_bounded(p,t)
+export function barycentric_triangle_bounded(p,t1,t2,t3)
 {
-    let bary = barycentric_triangle(p,[t[0],t[1],t[2]]);
+    let bary = barycentric_triangle(p,t1,t2,t3);
     let sw = 0;
     if(bary[0] <= 0) sw += 1;
     if(bary[1] <= 0) sw += 2;
@@ -152,18 +152,18 @@ export function barycentric_triangle_bounded(p,t)
             return bary;
             break;
         case 1:
-            bary = barycentric_line_bounded(p,[t[1],t[2]]);
+            bary = barycentric_line_bounded(p,t2,t3);
             return [0,bary[0],bary[1]];
             break;
         case 2:
-            bary = barycentric_line_bounded(p,[t[0],t[2]]);
+            bary = barycentric_line_bounded(p,t1,t3);
             return [bary[0],0,bary[1]];
             break;
         case 3:
             return [0,0,1];
             break;
         case 4:
-            bary = barycentric_line_bounded(p,[t[0],t[1]]);
+            bary = barycentric_line_bounded(p,t1,t2);
             return [bary[0],bary[1],0];
             break;
         case 5:
@@ -177,7 +177,7 @@ export function barycentric_triangle_bounded(p,t)
 
 export function project_onto_triangle(p,t1,t2,t3)
 {
-    let bary = barycentric_triangle(p,[t1,t2,t3]);
+    let bary = barycentric_triangle(p,t1,t2,t3);
     let sw = 0;
     if(bary[0] <= 0) sw += 1;
     if(bary[1] <= 0) sw += 2;
