@@ -132,7 +132,7 @@ export var validity_check =
                     <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
-                <template v-if="comp_colors.length >= 2">
+                <template v-if="comp_colors.length >= 3">
                     <v-label>Three Component Colors</v-label>
                     <v-btn color="secondary" @click="show_2 = !show_2">Show 2</v-btn>
                     <v-divider class="border-opacity-0"></v-divider>
