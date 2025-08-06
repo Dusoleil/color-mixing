@@ -22,11 +22,13 @@ export var font = (async function()
     });
 })();
 
+export const webgl_support = WebGL.isWebGL2Available();
+
 export var plot =
 {
     data()
     {return{
-        renderer:WebGL.isWebGL2Available()?new THREE.WebGLRenderer({antialias:true}):new SVGRenderer(),
+        renderer:webgl_support?new THREE.WebGLRenderer({antialias:true}):new SVGRenderer(),
         camera:new THREE.PerspectiveCamera(75,1,0.1,1000),
         pivot:new THREE.Object3D(),
         pivot_x:0,
@@ -217,7 +219,7 @@ export var plot =
         },
         draw_compass(origin,diameter)
         {
-            if(WebGL.isWebGL2Available())
+            if(webgl_support)
                 diameter -= 0.5;
             const radius = (diameter / 2);
             const vorigin = new THREE.Vector3(origin[0],origin[1],origin[2]);
@@ -225,7 +227,7 @@ export var plot =
             const edge_x = corner.clone().add(new THREE.Vector3(diameter,0,0));
             const edge_y = corner.clone().add(new THREE.Vector3(0,diameter,0));
             const edge_z = corner.clone().add(new THREE.Vector3(0,0,diameter));
-            if(WebGL.isWebGL2Available())
+            if(webgl_support)
             {
                 const vertices = [];
                 const colors = [];
