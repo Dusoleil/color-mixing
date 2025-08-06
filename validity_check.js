@@ -9,7 +9,8 @@ export var validity_check =
 {
     data()
     {return{
-        old_sp:0
+        old_sp:0,
+        show_2:false
     }},
     created()
     {
@@ -67,16 +68,23 @@ export var validity_check =
         {
             if(h.length == 1)
                 return proj.point_to_point_distance(p.XYZ,h[0].XYZ);
-            if(h.length >= 2)
+            if(h.length == 2)
                 return proj.point_to_line_distance(p.XYZ,h[0].XYZ,h[1].XYZ);
+            if(h.length >= 3)
+                return proj.point_to_triangle_distance(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
         },
         closest_to_hull(p,h)
         {
             if(h.length == 1)
                 return proj.point_to_point_distance(p.XYZ,h[0].XYZ);
-            if(h.length >= 2)
+            if(h.length == 2)
             {
-                let projection = proj.project_onto_line(p.XYZ,h[0].XYZ,h[1].XYZ);
+                let projection = proj.project_onto_line_segment(p.XYZ,h[0].XYZ,h[1].XYZ);
+                return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
+            }
+            if(h.length >= 3)
+            {
+                let projection = proj.project_onto_triangle(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
                 return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
             }
         },
@@ -84,8 +92,10 @@ export var validity_check =
         {
             if(h.length == 1)
                 return proj.barycentric_point(p.XYZ,h[0].XYZ);
-            if(h.length >= 2)
-                return proj.barycentric_line(p.XYZ,[h[0].XYZ,h[1].XYZ]);
+            if(h.length == 2)
+                return proj.barycentric_line_bounded(p.XYZ,[h[0].XYZ,h[1].XYZ]);
+            if(h.length >= 3)
+                return proj.barycentric_triangle_bounded(p.XYZ,[h[0].XYZ,h[1].XYZ,h[2].XYZ]);
         }
     },
     components:
@@ -101,14 +111,14 @@ export var validity_check =
                     <v-label>No Component Colors to Work With</v-label>
                 </template>
                 <template v-if="comp_colors.length == 1">
-                    <v-label>Only One Component Color</v-label>
+                    <v-label>One Component Color</v-label>
                     <v-divider color="primary"></v-divider>
                     {{target.name}} is {{target_distance_to_hull.toFixed(4)}} away from {{comp_colors[0].name}}
                     <v-divider class="border-opacity-0"></v-divider>
                     {{current.name}} is {{current_distance_to_hull.toFixed(4)}} away from {{comp_colors[0].name}}
                 </template>
-                <template v-if="comp_colors.length >= 2">
-                    <v-label>First Two Component Colors</v-label>
+                <template v-if="comp_colors.length == 2 || (comp_colors.length >= 2 && show_2)">
+                    <v-label>Two Component Colors</v-label>
                     <v-divider class="border-opacity-0"></v-divider>
                     {{target.name}} is {{target_distance_to_hull.toFixed(4)}} away from the line.
                     <v-divider class="border-opacity-0"></v-divider>
@@ -122,7 +132,20 @@ export var validity_check =
                     <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
-                <template v-if="comp_colors.length > 2">
+                <template v-if="comp_colors.length >= 2">
+                    <v-label>Three Component Colors</v-label>
+                    <v-btn color="secondary" @click="show_2 = !show_2">Show 2</v-btn>
+                    <v-divider class="border-opacity-0"></v-divider>
+                    {{target.name}} is {{target_distance_to_hull.toFixed(4)}} away from the triangle.
+                    <v-divider class="border-opacity-0"></v-divider>
+                    {{current.name}} is {{current_distance_to_hull.toFixed(4)}} away from the triangle.
+                    <v-divider class="border-opacity-0"></v-divider>
+                    The estimated makeup of {{target.name}} is {{target_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{target_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, and {{target_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}.
+                    <v-divider class="border-opacity-0"></v-divider>
+                    The estimated makeup of {{current.name}} is {{current_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{current_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, and {{current_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}.
+                    <v-divider class="border-opacity-0"></v-divider>
+                </template>
+                <template v-if="comp_colors.length > 3">
                     <v-label>More Components Not Yet Implemented</v-label>
                 </template>
             </v-card-text></v-card>
