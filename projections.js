@@ -60,27 +60,6 @@ export function project_onto_line_segment(p,l1,l2)
     return project_onto_line(p,l1,l2);
 }
 
-export function calculate_1_setpoint(old_sp,current_bary,target_bary)
-{
-    if(old_sp[0] <= 0) return target_bary;
-    if(old_sp[1] <= 0) return [old_sp[0],target_bary[1]];
-    if(target_bary[0] <= 0) return [0,target_bary[1]];
-    if(target_bary[0] >= 1) return [old_sp[0],0];
-    if(target_bary[1] <= 0) return [old_sp[0],0];
-    if(target_bary[1] >= 1) return [0,target_bary[1]];
-    if(current_bary[0] <= 0) return [old_sp[0],target_bary[1]];
-    if(current_bary[0] >= 1) return [old_sp[0],target_bary[1]];
-    if(current_bary[1] <= 0) return [old_sp[0],target_bary[1]];
-    if(current_bary[1] >= 1) return [old_sp[0],target_bary[1]];
-    let old_sp_ratio = old_sp[0]/old_sp[1];
-    let target_bary_ratio = target_bary[0]/target_bary[1];
-    let current_bary_ratio = current_bary[0]/current_bary[1];
-    let mult = old_sp_ratio / current_bary_ratio;
-    let new_sp_ratio = mult * target_bary_ratio;
-    let new_sp = [old_sp[0],old_sp[0]/new_sp_ratio];
-    return new_sp;
-}
-
 export function point_to_line_distance(p,l1,l2)
 {
     let projection = project_onto_line_segment(p,l1,l2);
@@ -222,6 +201,35 @@ export function angle_between_lines(a1,a2,b1,b2)
     vec3.subtract(b,b2,b1);
     let t = vec3.angle(a,b);
     return t;
+}
+
+export function calculate_setpoints(old_sp,current_bary,target_bary)
+{
+    if(current_bary[0] <= 0 || target_bary[0] <= 0) return target_bary;
+    let new_sp = [0];
+    for(let i = 1; i < old_sp.length; i++)
+    {
+        if(target_bary[i] <= 0)
+        {
+            new_sp.push(0);
+            continue;
+        }
+        if(old_sp[i] <= 0)
+        {
+            new_sp.push(target_bary[i]);
+            continue;
+        }
+        if(current_bary[i] <= 0)
+        {
+            new_sp.push(old_sp[i]*2);
+            continue;
+        }
+        let cur_bary_ratio = current_bary[i] / current_bary[0];
+        let tar_bary_ratio = target_bary[i] / target_bary[0];
+        let mult = tar_bary_ratio / cur_bary_ratio;
+        new_sp.push(mult*old_sp[i]);
+    }
+    return new_sp;
 }
 
 export function angle_between_lines_q1(a1,a2,b1,b2)

@@ -9,8 +9,7 @@ export var validity_check =
 {
     data()
     {return{
-        old_sp:0,
-        show_2:false
+        old_sp:[0,0,0,0]
     }},
     created()
     {
@@ -56,10 +55,16 @@ export var validity_check =
         },
         new_sp()
         {
-            if(this.comp_colors.length > 1)
-                return proj.calculate_1_setpoint([51,this.old_sp],this.current_barycentric,this.target_barycentric)[1];
-            else
-                return 0;
+            if(this.comp_colors.length < 2)
+                return [0,0,0,0];
+            return proj.calculate_setpoints(this.old_sp,this.current_barycentric,this.target_barycentric);
+        }
+    },
+    watch:
+    {
+        comp_colors()
+        {
+            this.old_sp.fill(0);
         }
     },
     methods:
@@ -117,7 +122,7 @@ export var validity_check =
                     <v-divider class="border-opacity-0"></v-divider>
                     {{current.name}} is {{current_distance_to_hull.toFixed(4)}} away from {{comp_colors[0].name}}
                 </template>
-                <template v-if="comp_colors.length == 2 || (comp_colors.length >= 2 && show_2)">
+                <template v-if="comp_colors.length == 2">
                     <v-label>Two Component Colors</v-label>
                     <v-divider class="border-opacity-0"></v-divider>
                     {{target.name}} is {{target_distance_to_hull.toFixed(4)}} away from the line.
@@ -128,13 +133,12 @@ export var validity_check =
                     <v-divider class="border-opacity-0"></v-divider>
                     The estimated makeup of {{current.name}} is {{current_barycentric[0].toFixed(4)}} {{comp_colors[0].name}} and {{current_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}.
                     <v-divider class="border-opacity-0"></v-divider>
-                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[1].name+' SP'" v-model.number="old_sp"></v-text-field>
-                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp"></v-text-field>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[1].name+' SP'" v-model.number="old_sp[1]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[1]"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
                 <template v-if="comp_colors.length >= 3">
                     <v-label>Three Component Colors</v-label>
-                    <v-btn color="secondary" @click="show_2 = !show_2">Show 2</v-btn>
                     <v-divider class="border-opacity-0"></v-divider>
                     {{target.name}} is {{target_distance_to_hull.toFixed(4)}} away from the triangle.
                     <v-divider class="border-opacity-0"></v-divider>
@@ -143,6 +147,11 @@ export var validity_check =
                     The estimated makeup of {{target.name}} is {{target_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{target_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, and {{target_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}.
                     <v-divider class="border-opacity-0"></v-divider>
                     The estimated makeup of {{current.name}} is {{current_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{current_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, and {{current_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}.
+                    <v-divider class="border-opacity-0"></v-divider>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[1].name+' SP'" v-model.number="old_sp[1]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[1]"></v-text-field>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[2].name+' SP'" v-model.number="old_sp[2]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[2]"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
                 <template v-if="comp_colors.length > 3">
