@@ -17,7 +17,10 @@ export class Color
 
     static from_xyz(name,xyz)
     {
-        let lab = Color.#xyz_to_lab(vec3.clone(xyz));
+        let lab = vec3.create();
+        vec3.max(lab,vec3.fromValues(0,0,0),vec3.clone(xyz));
+        vec3.min(lab,lab,vec3.fromValues(100,100,100));
+        lab = Color.#xyz_to_lab(lab);
         return new Color(name,lab);
     }
 

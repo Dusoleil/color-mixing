@@ -28,6 +28,7 @@ export var plot =
 {
     data()
     {return{
+        linear:false,
         renderer:webgl_support?new THREE.WebGLRenderer({antialias:true}):new SVGRenderer(),
         camera:new THREE.PerspectiveCamera(75,1,0.1,1000),
         pivot:new THREE.Object3D(),
@@ -76,32 +77,58 @@ export var plot =
         {
             this.renderer.setClearColor(this.$vuetify.theme.current.colors.surface);
             this.redraw();
+        },
+        linear()
+        {
+            this.redraw();
         }
     },
     methods:
     {
+        color3(c)
+        {
+            let val = [];
+            if(this.linear)
+            {
+                val.push(c.X);
+                val.push(c.Y);
+                val.push(c.Z);
+            }
+            else
+            {
+                val.push(c.a);
+                val.push(c.L);
+                val.push(-c.b);
+            }
+            val.push(c.hex);
+            val.push(c.name);
+            return val;
+        },
         zoom()
         {
-            let min_x = this.current.a;
-            let max_x = this.current.a;
-            let min_y = this.current.L;
-            let max_y = this.current.L;
-            let min_z = this.current.b;
-            let max_z = this.current.b;
+            const cur = this.color3(this.current);
+            let min_x = cur[0];
+            let max_x = cur[0];
+            let min_y = cur[1];
+            let max_y = cur[1];
+            let min_z = cur[2];
+            let max_z = cur[2];
+            const color3 = this.color3;
             function bounds(c)
             {
-                min_x = Math.min(min_x,c.a);
-                max_x = Math.max(max_x,c.a);
-                min_y = Math.min(min_y,c.L);
-                max_y = Math.max(max_y,c.L);
-                min_z = Math.min(min_z,c.b);
-                max_z = Math.max(max_z,c.b);
+                let b = color3(c);
+                min_x = Math.min(min_x,b[0]);
+                max_x = Math.max(max_x,b[0]);
+                min_y = Math.min(min_y,b[1]);
+                max_y = Math.max(max_y,b[1]);
+                min_z = Math.min(min_z,b[2]);
+                max_z = Math.max(max_z,b[2]);
             }
             bounds(this.target);
             for(const col of this.comp_colors)
                 bounds(col);
-            let origin = [(min_x+max_x)/2,(min_y+max_y)/2,-(min_z+max_z)/2];
-            let zoom_factor = 1.1;
+            let origin = [(min_x+max_x)/2,(min_y+max_y)/2,(min_z+max_z)/2];
+            let zoom_factor = this.linear ? 1.5 : 1.1;
             let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
             this.pivot.position.set(origin[0],origin[1],origin[2]);
             this.camera.position.set(0,0,Math.max(15,((max_z-min_z)+diameter)/2));
@@ -153,7 +180,7 @@ export var plot =
         {
             let hull = [];
             for(const c of this.comp_colors)
-                hull.push([c.a,c.L,-c.b,c.hex,c.name]);
+                hull.push(this.color3(c));
             this.plot_hull(hull);
         },
         plot_point(p)
@@ -188,11 +215,11 @@ export var plot =
         },
         plot_current()
         {
-            this.plot_point([this.current.a,this.current.L,-this.current.b,this.current.hex,this.current.name]);
+            this.plot_point(this.color3(this.current));
         },
         plot_target()
         {
-            this.plot_point([this.target.a,this.target.L,-this.target.b,this.target.hex,this.target.name]);
+            this.plot_point(this.color3(this.target));
         },
         draw_background_box(origin,diameter)
         {
@@ -227,27 +254,36 @@ export var plot =
             const edge_x = corner.clone().add(new THREE.Vector3(diameter,0,0));
             const edge_y = corner.clone().add(new THREE.Vector3(0,diameter,0));
             const edge_z = corner.clone().add(new THREE.Vector3(0,0,diameter));
+            let green = new THREE.Color(new Color("",[50,-127,128]).hex);
+            let red = new THREE.Color(new Color("",[0,128,0]).hex);
+            let black = new THREE.Color(new Color("",[0,0,0]).hex);
+            let white = new THREE.Color(new Color("",[100,0,0]).hex);
+            let yellow = new THREE.Color(new Color("",[100,0,128]).hex);
+            let blue = new THREE.Color(new Color("",[50,0,-127]).hex);
+            if(this.linear)
+            {
+                green = new THREE.Color(Color.from_xyz("",[0,0,0]).hex);
+                red = new THREE.Color(Color.from_xyz("",[100,0,0]).hex);
+                black = new THREE.Color(Color.from_xyz("",[0,0,0]).hex);
+                white = new THREE.Color(Color.from_xyz("",[0,100,0]).hex);
+                yellow = new THREE.Color(Color.from_xyz("",[0,0,0]).hex);
+                blue = new THREE.Color(Color.from_xyz("",[0,0,100]).hex);
+            }
             if(webgl_support)
             {
                 const vertices = [];
                 const colors = [];
                 vertices.push(corner.x,corner.y,corner.z);
-                const green = new THREE.Color(new Color("",[50,-127,128]).hex);
                 colors.push(green.r,green.g,green.b);
                 vertices.push(edge_x.x,edge_x.y,edge_x.z);
-                const red = new THREE.Color(new Color("",[0,128,0]).hex);
                 colors.push(red.r,red.g,red.b);
                 vertices.push(corner.x,corner.y,corner.z);
-                const black = new THREE.Color(new Color("",[0,0,0]).hex);
                 colors.push(black.r,black.g,black.b);
                 vertices.push(edge_y.x,edge_y.y,edge_y.z);
-                const white = new THREE.Color(new Color("",[100,0,0]).hex);
                 colors.push(white.r,white.g,white.b);
                 vertices.push(corner.x,corner.y,corner.z);
-                const yellow = new THREE.Color(new Color("",[100,0,128]).hex);
                 colors.push(yellow.r,yellow.g,yellow.b);
                 vertices.push(edge_z.x,edge_z.y,edge_z.z);
-                const blue = new THREE.Color(new Color("",[50,0,-127]).hex);
                 colors.push(blue.r,blue.g,blue.b);
                 const geometry = new LineSegmentsGeometry();
                 geometry.setPositions(vertices);
@@ -271,17 +307,11 @@ export var plot =
                     line.renderOrder = -1;
                     scene.add(line);
                 }
-                const green = new THREE.Color(new Color("",[50,-127,128]).hex);
                 draw_line(corner,corner.clone().add(new THREE.Vector3(radius,0,0)),green);
-                const red = new THREE.Color(new Color("",[0,128,0]).hex);
                 draw_line(corner.clone().add(new THREE.Vector3(radius,0,0)),edge_x,red);
-                const black = new THREE.Color(new Color("",[0,0,0]).hex);
                 draw_line(corner,corner.clone().add(new THREE.Vector3(0,radius,0)),black);
-                const white = new THREE.Color(new Color("",[100,0,0]).hex);
                 draw_line(corner.clone().add(new THREE.Vector3(0,radius,0)),edge_y,white);
-                const yellow = new THREE.Color(new Color("",[100,0,128]).hex);
                 draw_line(corner,corner.clone().add(new THREE.Vector3(0,0,radius)),yellow);
-                const blue = new THREE.Color(new Color("",[50,0,-127]).hex);
                 draw_line(corner.clone().add(new THREE.Vector3(0,0,radius)),edge_z,blue);
             }
         },
@@ -371,7 +401,16 @@ export var plot =
         this.obv.disconnect();
     },
     template:/*html*/`
-        <v-card title="Graph" class="mb-4" elevation="10"><v-card-text>
-            <div class="mx-auto plot" :style="{'max-width':'max-content'}"></div>
-        </v-card-text></v-card>`
+        <v-card class="mb-4" elevation="10">
+            <v-card-title class="d-flex">
+                <span>Color Plot</span>
+                <v-switch class="ml-auto" v-model="linear">
+                    <template #prepend>Lab</template>
+                    <template #append>XYZ</template>
+                </v-switch>
+            </v-card-title>
+            <v-card-text>
+                <div class="mx-auto plot" :style="{'max-width':'max-content'}"></div>
+            </v-card-text>
+        </v-card>`
 }
