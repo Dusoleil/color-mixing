@@ -4,8 +4,23 @@ import {SVGRenderer} from 'three/addons/renderers/SVGRenderer.js'
 import {LineSegmentsGeometry} from 'three/addons/lines/LineSegmentsGeometry.js'
 import {LineMaterial} from 'three/addons/lines/LineMaterial.js'
 import {LineSegments2} from 'three/addons/lines/LineSegments2.js'
+import {FontLoader} from 'three/addons/loaders/FontLoader.js'
+import {TextGeometry} from 'three/addons/geometries/TextGeometry.js'
 import {Color} from "color"
 import { getCurrentInstance } from 'vue'
+
+export var font = (async function()
+{
+    let val = null;
+    const loader = new FontLoader();
+    return await new Promise((resolve) =>
+    {
+        loader.load('fonts/droid_sans_regular.typeface.json',(f)=>
+        {
+            resolve(f);
+        });
+    });
+})();
 
 export var plot =
 {
@@ -72,12 +87,12 @@ export var plot =
             let max_z = this.current.b;
             function bounds(c)
             {
-                if(c.a < min_x) min_x = c.a;
-                if(c.a > max_x) max_x = c.a;
-                if(c.L < min_y) min_y = c.L;
-                if(c.L > max_y) max_y = c.L;
-                if(c.b < min_z) min_z = c.b;
-                if(c.b > max_z) max_z = c.b;
+                min_x = Math.min(min_x,c.a);
+                max_x = Math.max(max_x,c.a);
+                min_y = Math.min(min_y,c.L);
+                max_y = Math.max(max_y,c.L);
+                min_z = Math.min(min_z,c.b);
+                max_z = Math.max(max_z,c.b);
             }
             bounds(this.target);
             for(const col of this.comp_colors)
@@ -86,7 +101,7 @@ export var plot =
             let zoom_factor = 1.1;
             let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
             this.pivot.position.set(origin[0],origin[1],origin[2]);
-            this.camera.position.set(0,0,((max_z-min_z)+diameter)/2);
+            this.camera.position.set(0,0,Math.max(15,((max_z-min_z)+diameter)/2));
             return [origin,diameter];
         },
         redraw()
@@ -134,7 +149,7 @@ export var plot =
         {
             let hull = [];
             for(const c of this.comp_colors)
-                hull.push([c.a,c.L,-c.b,c.hex]);
+                hull.push([c.a,c.L,-c.b,c.hex,c.name]);
             this.plot_hull(hull);
         },
         plot_point(p)
@@ -145,14 +160,20 @@ export var plot =
             const material = new THREE.PointsMaterial({color:p[3], size:2.0});
             const points = new THREE.Points(geometry, material);
             this.$scene.add( points );
+            const text_geometry = new TextGeometry(p[4],{font:font,size:1.5,depth:0.2});
+            const text_material = new THREE.MeshBasicMaterial({color: 0x222222});
+            const text = new THREE.Mesh(text_geometry,text_material);
+            text.position.set(p[0],p[1],p[2]);
+            text.rotateY(0.5);
+            this.$scene.add(text);
         },
         plot_current()
         {
-            this.plot_point([this.current.a,this.current.L,-this.current.b,this.current.hex]);
+            this.plot_point([this.current.a,this.current.L,-this.current.b,this.current.hex,this.current.name]);
         },
         plot_target()
         {
-            this.plot_point([this.target.a,this.target.L,-this.target.b,this.target.hex]);
+            this.plot_point([this.target.a,this.target.L,-this.target.b,this.target.hex,this.target.name]);
         },
         draw_background_box(origin,diameter)
         {
@@ -279,8 +300,9 @@ export var plot =
         this.camera.lookAt(this.pivot.position);
         this.spin_pivot(-60,10);
     },
-    mounted()
+    async mounted()
     {
+        font = await font;
         this.obv.observe(this.$el);
         const el = this.$el.querySelector(".plot");
         el.appendChild(this.renderer.domElement);
