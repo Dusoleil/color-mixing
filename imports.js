@@ -10,6 +10,7 @@ const import_map =
         three:"https://cdn.jsdelivr.net/npm/three@0.179.1/build/three.module.js",
         "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.179.1/examples/jsm/",
         color:"./color.js",
+        projections:"./projections.js",
         app_header:"./app_header.js",
         color_pane:"./color_pane.js",
         color_viewer:"./color_viewer.js",
