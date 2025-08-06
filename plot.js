@@ -31,6 +31,7 @@ export var plot =
         pivot:new THREE.Object3D(),
         pivot_x:0,
         pivot_y:0,
+        text_coords:[],
         obv:new ResizeObserver((entries) =>
         {
             if(this.$vuetify.display.mobile)
@@ -106,6 +107,7 @@ export var plot =
         },
         redraw()
         {
+            this.text_coords = [];
             this.$scene.clear();
             this.$scene.add(this.pivot);
             this.plot_current();
@@ -163,8 +165,23 @@ export var plot =
             const text_geometry = new TextGeometry(p[4],{font:font,size:1.5,depth:0.2});
             const text_material = new THREE.MeshBasicMaterial({color: 0x222222});
             const text = new THREE.Mesh(text_geometry,text_material);
-            text.position.set(p[0],p[1],p[2]);
-            text.rotateY(0.5);
+            let tp = new THREE.Vector3(p[0],p[1],p[2]);
+            const leading = 1.6;
+            adjust_text: while(true)
+            {
+                for(let etp of this.text_coords)
+                {
+                    if(tp.distanceTo(etp) < leading)
+                    {
+                        tp.sub(new THREE.Vector3(0,leading,0));
+                        continue adjust_text;
+                    }
+                }
+                this.text_coords.push(tp);
+                break;
+            }
+            text.position.set(tp.x,tp.y,tp.z);
+            text.rotateY(0.6);
             this.$scene.add(text);
         },
         plot_current()
