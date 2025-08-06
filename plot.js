@@ -38,9 +38,9 @@ export var plot =
         obv:new ResizeObserver((entries) =>
         {
             if(this.$vuetify.display.mobile)
-                this.renderer.setSize(250,250);
+                this.renderer.setSize(325,325);
             else
-                this.renderer.setSize(400,400);
+                this.renderer.setSize(425,425);
             this.renderer.render(this.$scene,this.camera);
         })
     }},
