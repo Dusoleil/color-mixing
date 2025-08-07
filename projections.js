@@ -1,4 +1,4 @@
-import {vec2,vec3,mat3,quat} from "glMatrix"
+import {vec2,vec3,vec4,mat3,mat4,quat} from "glMatrix"
 
 export function point_to_point_distance(p1,p2)
 {
@@ -129,28 +129,21 @@ export function barycentric_triangle_bounded(p,t1,t2,t3)
     {
         case 0:
             return bary;
-            break;
         case 1:
             bary = barycentric_line_bounded(p,t2,t3);
             return [0,bary[0],bary[1]];
-            break;
         case 2:
             bary = barycentric_line_bounded(p,t1,t3);
             return [bary[0],0,bary[1]];
-            break;
         case 3:
             return [0,0,1];
-            break;
         case 4:
             bary = barycentric_line_bounded(p,t1,t2);
             return [bary[0],bary[1],0];
-            break;
         case 5:
             return [0,1,0];
-            break;
         case 6:
             return [1,0,0];
-            break;
     }
 }
 
@@ -165,25 +158,18 @@ export function project_onto_triangle(p,t1,t2,t3)
     {
         case 0:
             return project_onto_plane(p,t1,t2,t3);
-            break;
         case 1:
             return project_onto_line_segment(p,t2,t3);
-            break;
         case 2:
             return project_onto_line_segment(p,t1,t3);
-            break;
         case 3:
             return t3;
-            break;
         case 4:
             return project_onto_line_segment(p,t1,t2);
-            break;
         case 5:
             return t2;
-            break;
         case 6:
             return t1;
-            break;
     }
 }
 
@@ -191,6 +177,70 @@ export function point_to_triangle_distance(p,t1,t2,t3)
 {
     let projection = project_onto_triangle(p,t1,t2,t3);
     return point_to_point_distance(p,projection);
+}
+
+export function barycentric_tetrahedron(p,t1,t2,t3,t4)
+{
+    let lin_eq_left = mat4.fromValues(t1[0],t1[1],t1[2],1,t2[0],t2[1],t2[2],1,t3[0],t3[1],t3[2],1,t4[0],t4[1],t4[2],1);
+    let lin_eq_right = vec4.fromValues(p[0],p[1],p[2],1);
+    let inv_left = mat4.create();
+    mat4.invert(inv_left,lin_eq_left);
+    let solution = vec4.create();
+    vec4.transformMat4(solution,lin_eq_right,inv_left);
+    return solution;
+}
+
+export function barycentric_tetrahedron_bounded(p,t1,t2,t3,t4)
+{
+    let bary = barycentric_tetrahedron(p,t1,t2,t3,t4);
+    let sw = 0;
+    if(bary[0] <= 0) sw += 1;
+    if(bary[1] <= 0) sw += 2;
+    if(bary[2] <= 0) sw += 4;
+    if(bary[3] <= 0) sw += 8;
+    switch(sw)
+    {
+        case 0:
+            return bary;
+        case 1:
+            bary = barycentric_triangle_bounded(p,t2,t3,t4);
+            return [0,bary[0],bary[1],bary[2]];
+        case 2:
+            bary = barycentric_triangle_bounded(p,t1,t3,t4);
+            return [bary[0],0,bary[1],bary[2]];
+        case 3:
+            bary = barycentric_line_bounded(p,t3,t4);
+            return [0,0,bary[0],bary[1]];
+        case 4:
+            bary = barycentric_triangle_bounded(p,t1,t2,t4);
+            return [bary[0],bary[1],0,bary[2]];
+        case 5:
+            bary = barycentric_line_bounded(p,t2,t4);
+            return [0,bary[0],0,bary[1]];
+        case 6:
+            bary = barycentric_line_bounded(p,t1,t3);
+            return [bary[0],0,bary[1],0];
+        case 7:
+            return [0,0,0,1];
+        case 8:
+            bary = barycentric_triangle_bounded(p,t1,t2,t3);
+            return [bary[0],bary[1],bary[2],0];
+        case 9:
+            bary = barycentric_line_bounded(p,t2,t3);
+            return [0,bary[0],bary[1],0];
+        case 10:
+            bary = barycentric_line_bounded(p,t1,t3);
+            return [bary[0],0,bary[1],0];
+        case 11:
+            return [0,0,1,0];
+        case 12:
+            bary = barycentric_line_bounded(p,t1,t2);
+            return [bary[0],bary[1],0,0];
+        case 13:
+            return [0,1,0,0];
+        case 14:
+            return [1,0,0,0];
+    }
 }
 
 export function angle_between_lines(a1,a2,b1,b2)

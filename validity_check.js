@@ -99,8 +99,10 @@ export var validity_check =
                 return proj.barycentric_point(p.XYZ,h[0].XYZ);
             if(h.length == 2)
                 return proj.barycentric_line_bounded(p.XYZ,h[0].XYZ,h[1].XYZ);
-            if(h.length >= 3)
+            if(h.length == 3)
                 return proj.barycentric_triangle_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
+            if(h.length >= 4)
+                return proj.barycentric_tetrahedron_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
         }
     },
     components:
@@ -154,8 +156,13 @@ export var validity_check =
                     <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[2]"></v-text-field>
                     <v-divider class="border-opacity-0"></v-divider>
                 </template>
-                <template v-if="comp_colors.length > 3">
-                    <v-label>More Components Not Yet Implemented</v-label>
+                <template v-if="comp_colors.length >= 4">
+                    <v-label>Four Component Colors</v-label>
+                    <v-divider class="border-opacity-0"></v-divider>
+                    The estimated makeup of {{target.name}} is {{target_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{target_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, {{target_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}, and {{target_barycentric[3].toFixed(4)}} {{comp_colors[3].name}}.
+                    <v-divider class="border-opacity-0"></v-divider>
+                    The estimated makeup of {{current.name}} is {{current_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{current_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, {{current_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}, and {{current_barycentric[3].toFixed(4)}} {{comp_colors[3].name}}.
+                    <v-divider class="border-opacity-0"></v-divider>
                 </template>
             </v-card-text></v-card>
             <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 2" :color="target_closest_to_hull"></color-viewer>
