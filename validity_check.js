@@ -174,6 +174,13 @@ export var validity_check =
                     <v-divider class="border-opacity-0"></v-divider>
                     The estimated makeup of {{current.name}} is {{current_barycentric[0].toFixed(4)}} {{comp_colors[0].name}}, {{current_barycentric[1].toFixed(4)}} {{comp_colors[1].name}}, {{current_barycentric[2].toFixed(4)}} {{comp_colors[2].name}}, and {{current_barycentric[3].toFixed(4)}} {{comp_colors[3].name}}.
                     <v-divider class="border-opacity-0"></v-divider>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[1].name+' SP'" v-model.number="old_sp[1]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[1]"></v-text-field>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[2].name+' SP'" v-model.number="old_sp[2]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[2]"></v-text-field>
+                    <v-text-field type="number" :style="{'min-width':'12ch'}" :label="comp_colors[3].name+' SP'" v-model.number="old_sp[3]"></v-text-field>
+                    <v-text-field disabled type="number" :style="{'min-width':'12ch'}" label="New SP" v-model.number="new_sp[3]"></v-text-field>
+                    <v-divider class="border-opacity-0"></v-divider>
                 </template>
             </v-card-text></v-card>
             <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 2" :color="target_closest_to_hull"></color-viewer>
