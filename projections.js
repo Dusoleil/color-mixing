@@ -243,6 +243,55 @@ export function barycentric_tetrahedron_bounded(p,t1,t2,t3,t4)
     }
 }
 
+export function project_onto_tetrahedron(p,t1,t2,t3,t4)
+{
+    let bary = barycentric_tetrahedron(p,t1,t2,t3,t4);
+    let sw = 0;
+    if(bary[0] <= 0) sw += 1;
+    if(bary[1] <= 0) sw += 2;
+    if(bary[2] <= 0) sw += 4;
+    if(bary[3] <= 0) sw += 8;
+    switch(sw)
+    {
+        case 0:
+            return p;
+        case 1:
+            return project_onto_triangle(p,t2,t3,t4);
+        case 2:
+            return project_onto_triangle(p,t1,t3,t4);
+        case 3:
+            return project_onto_line_segment(p,t3,t4);
+        case 4:
+            return project_onto_triangle(p,t1,t2,t4);
+        case 5:
+            return project_onto_line_segment(p,t2,t4);
+        case 6:
+            return project_onto_line_segment(p,t1,t3);
+        case 7:
+            return t4;
+        case 8:
+            return project_onto_triangle(p,t1,t2,t3);
+        case 9:
+            return project_onto_line_segment(p,t2,t3);
+        case 10:
+            return project_onto_line_segment(p,t1,t3);
+        case 11:
+            return t3;
+        case 12:
+            return project_onto_line_segment(p,t1,t2);
+        case 13:
+            return t2;
+        case 14:
+            return t1;
+    }
+}
+
+export function point_to_tetrahedron_distance(p,t1,t2,t3,t4)
+{
+    let projection = project_onto_tetrahedron(p,t1,t2,t3,t4);
+    return point_to_point_distance(p,projection);
+}
+
 export function angle_between_lines(a1,a2,b1,b2)
 {
     let a = vec3.create();
