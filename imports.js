@@ -18,7 +18,8 @@ const import_map =
         swatch:"./swatch.js",
         accuracy_check:"./accuracy_check.js",
         validity_check:"./validity_check.js",
-        plot:"./plot.js"
+        plot:"./plot.js",
+        setpoints:"./setpoints.js"
     }
 }
 

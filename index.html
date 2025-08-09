@@ -23,6 +23,9 @@
                         <validity-check></validity-check>
                     </v-window-item>
                     <v-window-item :value="2">
+                        <setpoints></setpoints>
+                    </v-window-item>
+                    <v-window-item :value="3">
                         <accuracy-check></accuracy-check>
                     </v-window-item>
                     <v-fab key="" :app="true" location="right bottom" :color="open ? '' : 'primary'" icon elevation="10" :size="nav_main_size">
@@ -31,11 +34,14 @@
                             <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="toggle_theme">
                                 <v-icon>{{$vuetify.theme.name == "light" ? 'mdi-white-balance-sunny' : 'mdi-weather-night'}}</v-icon>
                             </v-btn>
-                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=2">
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=3">
                                 <v-icon>mdi-check-decagram</v-icon>
                             </v-btn>
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=2">
+                                <v-icon>mdi-weight</v-icon>
+                            </v-btn>
                             <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=1">
-                                <v-icon>mdi-vector-polyline-remove</v-icon>
+                                <v-icon>mdi-chart-scatter-plot</v-icon>
                             </v-btn>
                             <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=0">
                                 <v-icon>mdi-palette-swatch-variant</v-icon>

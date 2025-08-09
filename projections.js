@@ -1,4 +1,4 @@
-import {vec2,vec3,vec4,mat3,mat4,quat} from "glMatrix"
+import {vec2,vec3,vec4,mat2,mat3,mat4,quat} from "glMatrix"
 
 export function point_to_point_distance(p1,p2)
 {
@@ -286,35 +286,6 @@ export function angle_between_lines(a1,a2,b1,b2)
     return t;
 }
 
-export function calculate_setpoints(old_sp,current_bary,target_bary)
-{
-    if(current_bary[0] <= 0 || target_bary[0] <= 0) return target_bary;
-    let new_sp = [0];
-    for(let i = 1; i < old_sp.length; i++)
-    {
-        if(target_bary[i] <= 0)
-        {
-            new_sp.push(0);
-            continue;
-        }
-        if(old_sp[i] <= 0)
-        {
-            new_sp.push(target_bary[i]);
-            continue;
-        }
-        if(current_bary[i] <= 0)
-        {
-            new_sp.push(old_sp[i]*2);
-            continue;
-        }
-        let cur_bary_ratio = current_bary[i] / current_bary[0];
-        let tar_bary_ratio = target_bary[i] / target_bary[0];
-        let mult = tar_bary_ratio / cur_bary_ratio;
-        new_sp.push(mult*old_sp[i]);
-    }
-    return new_sp;
-}
-
 export function angle_between_lines_q1(a1,a2,b1,b2)
 {
     let t = angle_between_lines(a1,a2,b1,b2);
@@ -326,4 +297,29 @@ export function angle_between_lines_q1(a1,a2,b1,b2)
 export function rad_to_deg(t)
 {
     return t * (180/Math.PI);
+}
+
+export function calculate_setpoint(old_sp,old_anchor,new_anchor,old_bary,new_bary,old_anchor_bary,new_anchor_bary)
+{
+    if(new_bary <= 0) return 0;
+    if(old_sp <= 0 || new_anchor <= 0 || old_anchor_bary <= 0 || old_anchor <= 0 || new_anchor_bary <= 0) return new_bary;
+    if(old_bary <= 0) return old_sp;
+    return (new_anchor*old_sp*old_anchor_bary*new_bary)/(old_anchor*new_anchor_bary*old_bary);
+}
+
+export function calculate_setpoints_fixed_sum(old_sp1,old_sp2,fixed_sum,old_bary1,old_bary2,new_bary1,new_bary2)
+{
+    if(fixed_sum <= 0) return [0,0];
+    if(new_bary1 <= 0) return [0,fixed_sum];
+    if(new_bary2 <= 0) return [fixed_sum,0];
+    if(old_sp1 <= 0 || old_sp2 <= 0) return [new_bary1,new_bary2];
+    if(old_bary1 <= 0) return [old_sp1,fixed_sum-old_sp1];
+    if(old_bary2 <= 0) return [old_sp2,fixed_sum-old_sp2];
+    let lin_eq_left = mat2.fromValues(-1*(old_sp2*old_bary1*new_bary2)/(old_sp1*new_bary1*old_bary2),1,1,1);
+    let lin_eq_right = vec2.fromValues(0,fixed_sum);
+    let inv_left = mat2.create();
+    mat2.invert(inv_left,lin_eq_left);
+    let solution = vec2.create();
+    vec2.transformMat2(solution,lin_eq_right,inv_left);
+    return solution;
 }

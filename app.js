@@ -8,6 +8,7 @@ import {app_header} from "app_header"
 import {color_pane} from "color_pane"
 import {accuracy_check} from "accuracy_check"
 import {validity_check} from "validity_check"
+import {setpoints} from "setpoints"
 
 const store =
 {
@@ -139,10 +140,6 @@ const uix =
     },
     defaults:
     {
-        VNumberInput:
-        {
-            inset:true
-        },
         VExpansionPanels:
         {
             static:true,
@@ -195,7 +192,8 @@ const app = createApp(
         "app-header":app_header,
         "color-pane":color_pane,
         "accuracy-check":accuracy_check,
-        "validity-check":validity_check
+        "validity-check":validity_check,
+        "setpoints":setpoints
     }
 });
 
