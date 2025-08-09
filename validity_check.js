@@ -25,14 +25,6 @@ export var validity_check =
         {
             return this.$store.state.comp_colors;
         },
-        target_distance_to_hull()
-        {
-            return this.distance_to_hull(this.target,this.comp_colors);
-        },
-        current_distance_to_hull()
-        {
-            return this.distance_to_hull(this.current,this.comp_colors);
-        },
         target_closest_to_hull()
         {
             return this.closest_to_hull(this.target,this.comp_colors);
@@ -52,17 +44,6 @@ export var validity_check =
     },
     methods:
     {
-        distance_to_hull(p,h)
-        {
-            if(h.length == 1)
-                return proj.point_to_point_distance(p.XYZ,h[0].XYZ);
-            if(h.length == 2)
-                return proj.point_to_line_distance(p.XYZ,h[0].XYZ,h[1].XYZ);
-            if(h.length == 3)
-                return proj.point_to_triangle_distance(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
-            if(h.length >= 4)
-                return proj.point_to_tetrahedron_distance(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
-        },
         closest_to_hull(p,h)
         {
             if(h.length == 1)
