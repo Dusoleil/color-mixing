@@ -104,7 +104,7 @@ export var setpoints =
                     </template>
                 </v-card-subtitle>
                 <v-card-text v-if="comp_colors.length >= 2" class="d-flex flex-column justify-center">
-                    <v-number-input onbeforeinput="event.stopPropagation()" v-for="(color,idx) in comp_colors" inset control-variant="stacked" density="compact" :label="color.name" v-model="old_sp[idx]" type="number" :precision="4"></v-number-input>
+                    <v-number-input onbeforeinput="event.stopPropagation()" v-for="(color,idx) in comp_colors" width="" density="compact" :label="color.name" v-model="old_sp[idx]" :precision="4"></v-number-input>
                 </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
@@ -112,7 +112,7 @@ export var setpoints =
                 <v-card-subtitle>One Component Stays Fixed</v-card-subtitle>
                 <v-card-text class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Fixed Component" :items="comp_colors_select" v-model="fix1"></v-select>
-                    <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" density="compact" :label="color.name" v-model="fix1_sp[idx]" :precision="4" disabled></v-number-input>
+                    <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" width="" density="compact" :label="color.name" v-model="fix1_sp[idx]" :precision="4" disabled></v-number-input>
                     </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
@@ -121,10 +121,10 @@ export var setpoints =
                 <v-card-text class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Addend Component 1" :items="comp_colors_select" v-model="fix1"></v-select>
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Addend Component 2" :items="comp_colors_select" v-model="fix2"></v-select>
-                    <v-number-input inset control-variant="stacked" density="compact" label="Fixed Sum" v-model="fix2_sum" :precision="4"></v-number-input>
+                    <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" label="Fixed Sum" v-model="fix2_sum" :precision="4"></v-number-input>
                     <v-label v-if="fix1 == fix2">Selected Components Must Be Different</v-label>
                     <template v-else>
-                        <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" density="compact" :label="color.name" v-model="fix2_sp[idx]" :precision="4" disabled></v-number-input>
+                        <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" width="" density="compact" :label="color.name" v-model="fix2_sp[idx]" :precision="4" disabled></v-number-input>
                     </template>
                 </v-card-text>
             </v-card>

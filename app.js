@@ -152,6 +152,13 @@ const uix =
             class:["border"],
             density:"compact",
             striped:"odd"
+        },
+        VNumberInput:
+        {
+            type:"number",
+            inset:true,
+            controlVariant:"stacked",
+            width:"8ch"
         }
     }
 };
