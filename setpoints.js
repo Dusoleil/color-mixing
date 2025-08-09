@@ -66,7 +66,7 @@ export var setpoints =
                     sp.push(fixed_sp[1]);
                     continue;
                 }
-                sp.push(proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],this.old_sp[this.fix1],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]));
+                sp.push(proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]));
             }
             return sp;
         }
