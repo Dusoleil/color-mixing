@@ -188,7 +188,7 @@ export var plot =
             const vertices = [];
             vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
             const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
-            const material = new THREE.PointsMaterial({color:p[3], size:2.0});
+            const material = new THREE.PointsMaterial({color:p[3], size:10.0, sizeAttenuation:false});
             const points = new THREE.Points(geometry, material);
             this.$scene.add( points );
             const text_geometry = new TextGeometry(p[4],{font:font,size:1.5,depth:0.2});
