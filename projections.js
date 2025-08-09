@@ -7,7 +7,7 @@ export function point_to_point_distance(p1,p2)
 
 export function barycentric_point(p,c)
 {
-    return 1;
+    return [1];
 }
 
 export function scalar_project_onto_line(p,l1,l2)
@@ -88,10 +88,12 @@ export function project_onto_plane(p,t1,t2,t3)
 {
     let rotation = get_rotation_from_triangle_to_xy(t1,t2,t3);
     let projection = vec3.create();
-    vec3.transformQuat(projection,p,rotation);
+    vec3.sub(projection,p,t1);
+    vec3.transformQuat(projection,projection,rotation);
     projection[2] = 0;
     quat.invert(rotation,rotation);
     vec3.transformQuat(projection,projection,rotation);
+    vec3.add(projection,projection,t1);
     return projection;
 }
 
@@ -121,35 +123,35 @@ export function barycentric_triangle(p,t1,t2,t3)
 export function barycentric_triangle_bounded(p,t1,t2,t3)
 {
     let bary = barycentric_triangle(p,t1,t2,t3);
-    let sw = 0;
-    if(bary[0] <= 0) sw += 1;
-    if(bary[1] <= 0) sw += 2;
-    if(bary[2] <= 0) sw += 4;
-    switch(sw)
+    if(bary[0] <= 0 || bary[1] <= 0 || bary[2] <= 0)
     {
-        case 0:
-            return bary;
-        case 1:
-            bary = barycentric_line_bounded(p,t2,t3);
-            return [0,bary[0],bary[1]];
-        case 2:
-            bary = barycentric_line_bounded(p,t1,t3);
-            return [bary[0],0,bary[1]];
-        case 3:
-            return [0,0,1];
-        case 4:
+        let dist_edge1 = point_to_line_distance(p,t1,t2);
+        let dist_edge2 = point_to_line_distance(p,t2,t3);
+        let dist_edge3 = point_to_line_distance(p,t1,t3);
+        let min_dist = Math.min(dist_edge1,Math.min(dist_edge2,dist_edge3));
+        if(min_dist == dist_edge1)
+        {
             bary = barycentric_line_bounded(p,t1,t2);
             return [bary[0],bary[1],0];
-        case 5:
-            return [0,1,0];
-        case 6:
-            return [1,0,0];
+        }
+        else if(min_dist == dist_edge2)
+        {
+            bary = barycentric_line_bounded(p,t2,t3);
+            return [0,bary[0],bary[1]];
+        }
+        else if(min_dist == dist_edge3)
+        {
+            bary = barycentric_line_bounded(p,t1,t3);
+            return [bary[0],0,bary[1]];
+        }
     }
+    else
+        return bary;
 }
 
 export function project_onto_triangle(p,t1,t2,t3)
 {
-    let bary = barycentric_triangle(p,t1,t2,t3);
+    let bary = barycentric_triangle_bounded(p,t1,t2,t3);
     let sw = 0;
     if(bary[0] <= 0) sw += 1;
     if(bary[1] <= 0) sw += 2;
@@ -193,59 +195,41 @@ export function barycentric_tetrahedron(p,t1,t2,t3,t4)
 export function barycentric_tetrahedron_bounded(p,t1,t2,t3,t4)
 {
     let bary = barycentric_tetrahedron(p,t1,t2,t3,t4);
-    let sw = 0;
-    if(bary[0] <= 0) sw += 1;
-    if(bary[1] <= 0) sw += 2;
-    if(bary[2] <= 0) sw += 4;
-    if(bary[3] <= 0) sw += 8;
-    switch(sw)
+    if(bary[0] <= 0 || bary[1] <= 0 || bary[2] <= 0 || bary[3] <= 0)
     {
-        case 0:
-            return bary;
-        case 1:
-            bary = barycentric_triangle_bounded(p,t2,t3,t4);
-            return [0,bary[0],bary[1],bary[2]];
-        case 2:
-            bary = barycentric_triangle_bounded(p,t1,t3,t4);
-            return [bary[0],0,bary[1],bary[2]];
-        case 3:
-            bary = barycentric_line_bounded(p,t3,t4);
-            return [0,0,bary[0],bary[1]];
-        case 4:
-            bary = barycentric_triangle_bounded(p,t1,t2,t4);
-            return [bary[0],bary[1],0,bary[2]];
-        case 5:
-            bary = barycentric_line_bounded(p,t2,t4);
-            return [0,bary[0],0,bary[1]];
-        case 6:
-            bary = barycentric_line_bounded(p,t1,t3);
-            return [bary[0],0,bary[1],0];
-        case 7:
-            return [0,0,0,1];
-        case 8:
+        let dist_face1 = point_to_triangle_distance(p,t1,t2,t3);
+        let dist_face2 = point_to_triangle_distance(p,t1,t2,t4);
+        let dist_face3 = point_to_triangle_distance(p,t1,t3,t4);
+        let dist_face4 = point_to_triangle_distance(p,t2,t3,t4);
+        let min_dist = Math.min(dist_face1,Math.min(dist_face2,Math.min(dist_face3,dist_face4)));
+        if(min_dist == dist_face1)
+        {
             bary = barycentric_triangle_bounded(p,t1,t2,t3);
             return [bary[0],bary[1],bary[2],0];
-        case 9:
-            bary = barycentric_line_bounded(p,t2,t3);
-            return [0,bary[0],bary[1],0];
-        case 10:
-            bary = barycentric_line_bounded(p,t1,t3);
-            return [bary[0],0,bary[1],0];
-        case 11:
-            return [0,0,1,0];
-        case 12:
-            bary = barycentric_line_bounded(p,t1,t2);
-            return [bary[0],bary[1],0,0];
-        case 13:
-            return [0,1,0,0];
-        case 14:
-            return [1,0,0,0];
+        }
+        else if(min_dist == dist_face2)
+        {
+            bary = barycentric_triangle_bounded(p,t1,t2,t4);
+            return [bary[0],bary[1],0,bary[2]];
+        }
+        else if(min_dist == dist_face3)
+        {
+            bary = barycentric_triangle_bounded(p,t1,t3,t4);
+            return [bary[0],0,bary[1],bary[2]];
+        }
+        else if(min_dist == dist_face4)
+        {
+            bary = barycentric_triangle_bounded(p,t2,t3,t4);
+            return [0,bary[0],bary[1],bary[2]];
+        }
     }
+    else
+        return bary;
 }
 
 export function project_onto_tetrahedron(p,t1,t2,t3,t4)
 {
-    let bary = barycentric_tetrahedron(p,t1,t2,t3,t4);
+    let bary = barycentric_tetrahedron_bounded(p,t1,t2,t3,t4);
     let sw = 0;
     if(bary[0] <= 0) sw += 1;
     if(bary[1] <= 0) sw += 2;
