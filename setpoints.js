@@ -104,7 +104,7 @@ export var setpoints =
                     </template>
                 </v-card-subtitle>
                 <v-card-text v-if="comp_colors.length >= 2" class="d-flex flex-column justify-center">
-                    <v-number-input v-for="(color,idx) in comp_colors" inset control-variant="stacked" density="compact" :label="color.name" v-model="old_sp[idx]" type="number" :precision="4"></v-number-input>
+                    <v-number-input onbeforeinput="event.stopPropagation()" v-for="(color,idx) in comp_colors" inset control-variant="stacked" density="compact" :label="color.name" v-model="old_sp[idx]" type="number" :precision="4"></v-number-input>
                 </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
