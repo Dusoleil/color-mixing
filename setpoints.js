@@ -71,6 +71,13 @@ export var setpoints =
             return sp;
         }
     },
+    watch:
+    {
+        comp_colors()
+        {
+            this.old_sp = [0,0,0,0];
+        }
+    },
     methods:
     {
         barycentric_coords(p,h)

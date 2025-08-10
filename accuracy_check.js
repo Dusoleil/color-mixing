@@ -1,4 +1,7 @@
 import {Color} from "color"
+import * as proj from "projections"
+import {color_viewer} from "color_viewer"
+import {DETAIL_LEVEL} from "color_detail"
 import {vec3} from "glMatrix"
 
 export var accuracy_check =
@@ -7,8 +10,14 @@ export var accuracy_check =
     {return{
         moving_comp:null,
         add_or_remove:true,
-        delta_after_move:[0,0,0]
+        delta_after_move:[0,0,0],
+        old_sp:[0,0,0,0],
+        new_sp:[0,0,0,0]
     }},
+    created()
+    {
+        this.DETAIL_LEVEL = DETAIL_LEVEL;
+    },
     computed:
     {
         target()
@@ -21,7 +30,11 @@ export var accuracy_check =
         },
         comp_colors()
         {
-            return this.$store.state.comp_colors.map((col) => {return {"value":col,"title":col.name}});
+            return this.$store.state.comp_colors;
+        },
+        comp_colors_select()
+        {
+            return this.comp_colors.map((col) => {return {"value":col,"title":col.name}});
         },
         color_after_move()
         {
@@ -55,13 +68,66 @@ export var accuracy_check =
         angle()
         {
             return vec3.angle(this.expected_move,this.actual_move);
+        },
+        current_barycentric()
+        {
+            return this.barycentric_coords(this.current,this.comp_colors);
+        },
+        prediction_by_barycentric()
+        {
+            let cur_proj = this.project_onto_hull(this.current,this.comp_colors);
+            let predict_proj = proj.predict_barycentric(this.old_sp,this.new_sp,this.current_barycentric);
+            let hull = this.comp_colors.map((col) => {return col.XYZ});
+            predict_proj = proj.get_composite_from_barycentric(hull,predict_proj);
+            let predict = vec3.clone(this.current.XYZ);
+            for(let c in hull)
+            {
+                if(this.old_sp[c] != this.new_sp[c])
+                {
+                    let comp_moved = hull[c];
+                    let a = proj.point_to_point_distance(cur_proj,comp_moved);
+                    let b = proj.scalar_project_onto_line(predict_proj,cur_proj,comp_moved);
+                    let part_scalar = (b/a);
+                    let part = vec3.clone(comp_moved);
+                    vec3.sub(part,part,this.current.XYZ);
+                    vec3.scale(part,part,part_scalar);
+                    vec3.add(predict,predict,part);
+                }
+            }
+            predict = Color.from_xyz("Predicted Color",predict);
+            return predict;
+        },
+        bary_delta_e()
+        {
+            return vec3.distance(this.prediction_by_barycentric.Lab,this.target.Lab);
+        },
+        bary_trajectory()
+        {
+            let a = vec3.create();
+            vec3.sub(a,this.prediction_by_barycentric.XYZ,this.current.XYZ);
+            vec3.normalize(a,a);
+            return a;
+        },
+        bary_angle()
+        {
+            return vec3.angle(this.bary_trajectory,this.actual_move);
+        },
+        bary_magnitude()
+        {
+            return vec3.distance(this.current.XYZ,this.prediction_by_barycentric.XYZ);
+        },
+        actual_magnitude()
+        {
+            return vec3.distance(this.current.XYZ,this.color_after_move.XYZ);
         }
     },
     watch:
     {
-        comp_colors()
+        comp_colors_select()
         {
-            this.moving_comp = this.comp_colors[0].value;
+            this.moving_comp = this.comp_colors_select[0].value;
+            this.old_sp = [0,0,0,0];
+            this.new_sp = [0,0,0,0];
         }
     },
     methods:
@@ -69,17 +135,48 @@ export var accuracy_check =
         load_into_current()
         {
             this.$store.commit("set_current",{Lab:this.delta_after_move,delta:true});
+        },
+        project_onto_hull(p,h)
+        {
+            if(h.length == 1)
+                return h[0].XYZ;
+            if(h.length == 2)
+                return proj.project_onto_line_segment(p.XYZ,h[0].XYZ,h[1].XYZ);
+            if(h.length == 3)
+                return proj.project_onto_triangle(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
+            if(h.length >= 4)
+                return proj.project_onto_tetrahedron(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
+        },
+        barycentric_coords(p,h)
+        {
+            if(h.length == 1)
+                return proj.barycentric_point(p.XYZ,h[0].XYZ);
+            if(h.length == 2)
+                return proj.barycentric_line_bounded(p.XYZ,h[0].XYZ,h[1].XYZ);
+            if(h.length == 3)
+                return proj.barycentric_triangle_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
+            if(h.length >= 4)
+                return proj.barycentric_tetrahedron_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
+        },
+        rad_to_deg(rad)
+        {
+            return proj.rad_to_deg(rad);
         }
     },
     mounted()
     {
-        if(this.comp_colors.length > 0)
-            this.moving_comp = this.comp_colors[0].value;
+        if(this.comp_colors_select.length > 0)
+            this.moving_comp = this.comp_colors_select[0].value;
+    },
+    components:
+    {
+        "color-viewer":color_viewer
     },
     template:/*html*/`
-        <v-card title="Check Accuracy" elevation="10" class="mx-auto mt-10 mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+        <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
+        <v-card title="One Component Trajectory Accuracy" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
             <div class="d-flex ga-4">
-                <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors" v-model="moving_comp"></v-select>
+                <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors_select" v-model="moving_comp"></v-select>
                 <v-switch prepend-icon="mdi-minus" append-icon="mdi-plus" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
             </div>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
@@ -118,8 +215,75 @@ export var accuracy_check =
                 </tr>
                 <tr>
                     <td>Accuracy &Theta; (Deg):</td>
-                    <td colspan="3">{{(angle*(180/Math.PI)).toFixed(4)}}</td>
+                    <td colspan="3">{{rad_to_deg(angle).toFixed(4)}}</td>
                 </tr>
             </tbody></v-table>
-        </v-card-text></v-card>`
+        </v-card-text></v-card>
+        <v-card v-if="target && current" title="Barycentric Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+            <div class="d-flex justify-center ga-4">
+                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
+                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
+            </div>
+            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :precision="4" v-model="old_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :precision="4" v-model="new_sp[idx]"></v-number-input>
+            </div>
+            <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
+            <div class="d-flex ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+            </div>
+            <v-btn color="primary" class="mb-4" @click="load_into_current">
+                Load This Color Into Current
+            </v-btn>
+            <v-table v-if="target && current && comp_colors.length >= 2"><tbody>
+                <tr>
+                    <td>Old &Delta;E:</td>
+                    <td colspan="3">{{old_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Predicted &Delta;E:</td>
+                    <td colspan="3">{{bary_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>New &Delta;E:</td>
+                    <td colspan="3">{{new_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Expected &Delta;:</td>
+                    <td>{{bary_trajectory[0].toFixed(2)}}</td>
+                    <td>{{bary_trajectory[1].toFixed(2)}}</td>
+                    <td>{{bary_trajectory[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Actual &Delta;:</td>
+                    <td>{{actual_move[0].toFixed(2)}}</td>
+                    <td>{{actual_move[1].toFixed(2)}}</td>
+                    <td>{{actual_move[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy &Theta; (Rad):</td>
+                    <td colspan="3">{{bary_angle.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy &Theta; (Deg):</td>
+                    <td colspan="3">{{rad_to_deg(bary_angle).toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Expected Magnitude:</td>
+                    <td colspan="3">{{bary_magnitude.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Actual Magnitude:</td>
+                    <td colspan="3">{{actual_magnitude.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Magnitude Accuracy:</td>
+                    <td colspan="3">{{(actual_magnitude-bary_magnitude).toFixed(4)}}</td>
+                </tr>
+            </tbody></v-table>
+        </v-card-text></v-card>
+        <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 2" :color="prediction_by_barycentric"></color-viewer>
+        </div>`
 };
