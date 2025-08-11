@@ -1,0 +1,68 @@
+import * as predict from "predictions"
+import {color_viewer} from "color_viewer"
+import {DETAIL_LEVEL} from "color_detail"
+
+export var try_setpoints =
+{
+    data()
+    {return{
+        old_sp:[0,0,0,0],
+        new_sp:[0,0,0,0]
+    }},
+    created()
+    {
+        this.DETAIL_LEVEL = DETAIL_LEVEL;
+    },
+    computed:
+    {
+        target()
+        {
+            return this.$store.state.target_color;
+        },
+        current()
+        {
+            return this.$store.state.current_color;
+        },
+        comp_colors()
+        {
+            return this.$store.state.comp_colors;
+        },
+        prediction_by_barycentric()
+        {
+            return predict.predict_color_by_barycentric(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,this.new_sp);
+        }
+    },
+    components:
+    {
+        "color-viewer":color_viewer
+    },
+    template:/*html*/`
+        <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
+        <v-card v-if="target && current" title="Try Setpoints" elevation="10" class="mb-4" :style="{'max-width':'max-content'}">
+            <v-card-subtitle>
+                <template v-if="comp_colors.length <= 1">
+                    Not Enough Component Colors to Work With
+                </template>
+                <template v-if="comp_colors.length == 2">
+                    Two Component Colors
+                </template>
+                <template v-if="comp_colors.length == 3">
+                    Three Component Colors
+                </template>
+                <template v-if="comp_colors.length >= 4">
+                    Four Component Colors
+                </template>
+            </v-card-subtitle>
+            <v-card-text>
+            <div v-if="comp_colors.length >= 2" class="d-flex justify-center ga-4">
+                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
+                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
+            </div>
+            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
+            </div>
+        </v-card-text></v-card>
+        <color-viewer :detail="DETAIL_LEVEL.NO_THETA" v-if="comp_colors.length >= 2" :color="prediction_by_barycentric"></color-viewer>
+        </div>`
+};

@@ -93,8 +93,8 @@ export var validity_check =
                 </v-card-text>
             </v-card>
             <div class="d-flex flex-wrap justify-center mt-8 ga-16">
-                <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 1" :color="target_closest_to_hull"></color-viewer>
-                <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 1" :color="current_closest_to_hull"></color-viewer>
+                <color-viewer :detail="DETAIL_LEVEL.NO_THETA" v-if="comp_colors.length >= 1" :color="target_closest_to_hull"></color-viewer>
+                <color-viewer :detail="DETAIL_LEVEL.NO_THETA" v-if="comp_colors.length >= 1" :color="current_closest_to_hull"></color-viewer>
             </div>
         </div>`
 };

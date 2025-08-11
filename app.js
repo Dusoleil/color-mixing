@@ -9,6 +9,7 @@ import {color_pane} from "color_pane"
 import {accuracy_check} from "accuracy_check"
 import {validity_check} from "validity_check"
 import {setpoints} from "setpoints"
+import {try_setpoints} from "try_setpoints"
 
 const store =
 {
@@ -200,7 +201,8 @@ const app = createApp(
         "color-pane":color_pane,
         "accuracy-check":accuracy_check,
         "validity-check":validity_check,
-        "setpoints":setpoints
+        "setpoints":setpoints,
+        "try-setpoints":try_setpoints
     }
 });
 

@@ -1,8 +1,6 @@
 import {Color} from "color"
 import * as proj from "projections"
 import * as predict from "predictions"
-import {color_viewer} from "color_viewer"
-import {DETAIL_LEVEL} from "color_detail"
 import {vec3} from "glMatrix"
 
 export var accuracy_check =
@@ -15,10 +13,6 @@ export var accuracy_check =
         old_sp:[0,0,0,0],
         new_sp:[0,0,0,0]
     }},
-    created()
-    {
-        this.DETAIL_LEVEL = DETAIL_LEVEL;
-    },
     computed:
     {
         target()
@@ -126,10 +120,6 @@ export var accuracy_check =
     {
         if(this.comp_colors_select.length > 0)
             this.moving_comp = this.comp_colors_select[0].value;
-    },
-    components:
-    {
-        "color-viewer":color_viewer
     },
     template:/*html*/`
         <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
@@ -243,6 +233,5 @@ export var accuracy_check =
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
-        <color-viewer :detail="DETAIL_LEVEL.PARTIAL" v-if="comp_colors.length >= 2" :color="prediction_by_barycentric"></color-viewer>
         </div>`
 };

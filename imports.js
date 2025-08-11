@@ -20,7 +20,8 @@ const import_map =
         validity_check:"./validity_check.js",
         plot:"./plot.js",
         setpoints:"./setpoints.js",
-        predictions:"./predictions.js"
+        predictions:"./predictions.js",
+        try_setpoints:"./try_setpoints.js"
     }
 }
 

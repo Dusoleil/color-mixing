@@ -4,7 +4,8 @@ export const DETAIL_LEVEL =
 {
     BASIC:0,
     PARTIAL:1,
-    FULL:2
+    NO_THETA:2,
+    FULL:3
 };
 
 export var color_detail =
@@ -217,6 +218,8 @@ export var color_detail =
                 </tr>
             </tbody></v-table>
             </v-expansion-panel-text></v-expansion-panel>
+            </template>
+            <template v-if="detail > DETAIL_LEVEL.NO_THETA">
             <v-table><tbody>
                 <tr>
                     <td>&Theta;:</td>
