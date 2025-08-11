@@ -19,7 +19,8 @@ const import_map =
         accuracy_check:"./accuracy_check.js",
         validity_check:"./validity_check.js",
         plot:"./plot.js",
-        setpoints:"./setpoints.js"
+        setpoints:"./setpoints.js",
+        predictions:"./predictions.js"
     }
 }
 

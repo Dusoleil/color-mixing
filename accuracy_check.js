@@ -1,5 +1,6 @@
 import {Color} from "color"
 import * as proj from "projections"
+import * as predict from "predictions"
 import {color_viewer} from "color_viewer"
 import {DETAIL_LEVEL} from "color_detail"
 import {vec3} from "glMatrix"
@@ -69,45 +70,9 @@ export var accuracy_check =
         {
             return vec3.angle(this.expected_move,this.actual_move);
         },
-        current_barycentric()
-        {
-            return this.barycentric_coords(this.current,this.comp_colors);
-        },
         prediction_by_barycentric()
         {
-            let cur_proj = this.project_onto_hull(this.current,this.comp_colors);
-            let predict_proj = proj.predict_barycentric(this.old_sp,this.new_sp,this.current_barycentric);
-            let hull = this.comp_colors.map((col) => col.XYZ);
-            predict_proj = proj.get_composite_from_barycentric(hull,predict_proj);
-            let predict = vec3.clone(this.current.XYZ);
-            let moved_comps = hull.filter((h,i)=>this.old_sp[i]!=this.new_sp[i]);
-            if(moved_comps.length >= 4 || moved_comps.length == hull.length)
-            {
-                let move_vec = vec3.create();
-                vec3.sub(move_vec,predict_proj,cur_proj);
-                vec3.add(predict,predict,move_vec);
-            }
-            else if(moved_comps.length >= 1)
-            {
-                let bary = [];
-                if(moved_comps.length == 1)
-                    bary = proj.barycentric_line(predict_proj,moved_comps[0],cur_proj);
-                if(moved_comps.length == 2)
-                    bary = proj.barycentric_triangle(predict_proj,moved_comps[0],moved_comps[1],cur_proj);
-                if(moved_comps.length == 3)
-                    bary = proj.barycentric_tetrahedron(predict_proj,moved_comps[0],moved_comps[1],moved_comps[2],cur_proj);
-                for(let c in moved_comps)
-                {
-                    let part = vec3.clone(moved_comps[c]);
-                    vec3.sub(part,part,this.current.XYZ);
-                    vec3.normalize(part,part);
-                    let d = proj.point_to_point_distance(cur_proj,moved_comps[c]);
-                    vec3.scale(part,part,bary[c]*d);
-                    vec3.add(predict,predict,part);
-                }
-            }
-            predict = Color.from_xyz("Predicted Color",predict);
-            return predict;
+            return predict.predict_color_by_barycentric(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,this.new_sp);
         },
         bary_delta_e()
         {
@@ -151,14 +116,6 @@ export var accuracy_check =
         load_into_current()
         {
             this.$store.commit("set_current",{Lab:this.delta_after_move,delta:true});
-        },
-        project_onto_hull(p,h)
-        {
-            return proj.project_onto_hull(p.XYZ,h.map((c)=>c.XYZ));
-        },
-        barycentric_coords(p,h)
-        {
-            return proj.barycentric_hull_bounded(p.XYZ,h.map((c)=>c.XYZ));
         },
         rad_to_deg(rad)
         {
@@ -282,7 +239,7 @@ export var accuracy_check =
                 </tr>
                 <tr>
                     <td>Magnitude Accuracy:</td>
-                    <td colspan="3">{{(actual_magnitude-bary_magnitude).toFixed(4)}}</td>
+                    <td colspan="3">{{(Math.abs(actual_magnitude-bary_magnitude)).toFixed(4)}}</td>
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>

@@ -1,4 +1,5 @@
 import * as proj from "projections"
+import * as predict from "predictions"
 import {vec3} from "glMatrix"
 
 export var setpoints =
@@ -42,20 +43,20 @@ export var setpoints =
             {
                 if(color == this.fix1)
                     return this.old_sp[color];
-                return proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],this.old_sp[this.fix1],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
+                return predict.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],this.old_sp[this.fix1],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
             });
             return sp;
         },
         fix2_sp()
         {
-            let fixed_sp = proj.calculate_setpoints_fixed_sum(this.old_sp[this.fix1],this.old_sp[this.fix2],this.fix2_sum,this.current_barycentric[this.fix1],this.current_barycentric[this.fix2],this.target_barycentric[this.fix1],this.target_barycentric[this.fix2]);
+            let fixed_sp = predict.calculate_setpoints_fixed_sum(this.old_sp[this.fix1],this.old_sp[this.fix2],this.fix2_sum,this.current_barycentric[this.fix1],this.current_barycentric[this.fix2],this.target_barycentric[this.fix1],this.target_barycentric[this.fix2]);
             let sp = this.comp_colors.map((_,color)=>
             {
                 if(color == this.fix1)
                     return fixed_sp[0];
                 if(color == this.fix2)
                     return fixed_sp[1];
-                return proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
+                return predict.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
             });
             return sp;
         }
