@@ -252,4 +252,7 @@ window.onload = async function() {
     app.use(vuex);
     app.use(createVuetify(uix));
     app.mount("#app");
+
+    if("serviceWorker" in navigator)
+        navigator.serviceWorker.register("sw.js");
 }
