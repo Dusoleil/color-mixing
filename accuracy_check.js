@@ -80,17 +80,29 @@ export var accuracy_check =
             let hull = this.comp_colors.map((col) => {return col.XYZ});
             predict_proj = proj.get_composite_from_barycentric(hull,predict_proj);
             let predict = vec3.clone(this.current.XYZ);
-            for(let c in hull)
+            let moved_comps = hull.filter((h,i)=>this.old_sp[i]!=this.new_sp[i]);
+            if(moved_comps.length >= 4 || moved_comps.length == hull.length)
             {
-                if(this.old_sp[c] != this.new_sp[c])
+                let move_vec = vec3.create();
+                vec3.sub(move_vec,predict_proj,cur_proj);
+                vec3.add(predict,predict,move_vec);
+            }
+            else if(moved_comps.length >= 1)
+            {
+                let bary = [];
+                if(moved_comps.length == 1)
+                    bary = proj.barycentric_line(predict_proj,moved_comps[0],cur_proj);
+                if(moved_comps.length == 2)
+                    bary = proj.barycentric_triangle(predict_proj,moved_comps[0],moved_comps[1],cur_proj);
+                if(moved_comps.length == 3)
+                    bary = proj.barycentric_tetrahedron(predict_proj,moved_comps[0],moved_comps[1],moved_comps[2],cur_proj);
+                for(let c in moved_comps)
                 {
-                    let comp_moved = hull[c];
-                    let a = proj.point_to_point_distance(cur_proj,comp_moved);
-                    let b = proj.scalar_project_onto_line(predict_proj,cur_proj,comp_moved);
-                    let part_scalar = (b/a);
-                    let part = vec3.clone(comp_moved);
+                    let part = vec3.clone(moved_comps[c]);
                     vec3.sub(part,part,this.current.XYZ);
-                    vec3.scale(part,part,part_scalar);
+                    vec3.normalize(part,part);
+                    let d = proj.point_to_point_distance(cur_proj,moved_comps[c]);
+                    vec3.scale(part,part,bary[c]*d);
                     vec3.add(predict,predict,part);
                 }
             }
