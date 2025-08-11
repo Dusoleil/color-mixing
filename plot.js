@@ -7,7 +7,7 @@ import {LineSegments2} from 'three/addons/lines/LineSegments2.js'
 import {FontLoader} from 'three/addons/loaders/FontLoader.js'
 import {TextGeometry} from 'three/addons/geometries/TextGeometry.js'
 import {Color} from "color"
-import { getCurrentInstance } from 'vue'
+import {getCurrentInstance} from 'vue'
 
 export var font = (async function()
 {
@@ -125,8 +125,7 @@ export var plot =
                 max_z = Math.max(max_z,b[2]);
             }
             bounds(this.target);
-            for(const col of this.comp_colors)
-                bounds(col);
+            this.comp_colors.forEach(bounds);
             let origin = [(min_x+max_x)/2,(min_y+max_y)/2,(min_z+max_z)/2];
             let zoom_factor = this.linear ? 1.5 : 1.1;
             let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
@@ -149,22 +148,17 @@ export var plot =
         },
         plot_hull(h)
         {
-            for(const p of h)
-            {
-                this.plot_point(p);
-            }
+            h.forEach(this.plot_point);
             if(h.length>1)
             {
-                const vertices = [];
+                let vertices = [];
                 if(h.length == 2 || h.length == 3)
-                    for(const p of h)
-                        vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
+                    vertices = h.map((p)=>new THREE.Vector3(p[0],p[1],p[2]));
                 if(h.length == 3)
                     vertices.push(new THREE.Vector3(h[0][0],h[0][1],h[0][2]));
                 if(h.length > 3)
                 {
-                    for(const p of h)
-                        vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
+                    vertices = h.map((p)=>new THREE.Vector3(p[0],p[1],p[2]));
                     vertices.push(new THREE.Vector3(h[0][0],h[0][1],h[0][2]));
                     vertices.push(new THREE.Vector3(h[2][0],h[2][1],h[2][2]));
                     vertices.push(new THREE.Vector3(h[3][0],h[3][1],h[3][2]));
@@ -178,9 +172,7 @@ export var plot =
         },
         plot_comp()
         {
-            let hull = [];
-            for(const c of this.comp_colors)
-                hull.push(this.color3(c));
+            let hull = this.comp_colors.map((c)=>this.color3(c));
             this.plot_hull(hull);
         },
         plot_point(p)
@@ -236,8 +228,8 @@ export var plot =
                 cube_geometry.addGroup(i*6,6,idx);
             }
             const cube_materials = [
-                new THREE.MeshBasicMaterial({ color: 0xdddddd , side:THREE.DoubleSide}),
-                new THREE.MeshBasicMaterial({ color: 0xbbbbbb , side:THREE.DoubleSide})
+                new THREE.MeshBasicMaterial({color: 0xdddddd , side:THREE.DoubleSide}),
+                new THREE.MeshBasicMaterial({color: 0xbbbbbb , side:THREE.DoubleSide})
             ];
             let background_box = new THREE.Mesh(cube_geometry,cube_materials);
             background_box.position.set(origin[0],origin[1],origin[2]);

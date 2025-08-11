@@ -38,36 +38,25 @@ export var setpoints =
         },
         fix1_sp()
         {
-            let sp = [];
-            for(let color in this.comp_colors)
+            let sp = this.comp_colors.map((_,color)=>
             {
                 if(color == this.fix1)
-                {
-                    sp.push(this.old_sp[color]);
-                    continue;
-                }
-                sp.push(proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],this.old_sp[this.fix1],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]));
-            }
+                    return this.old_sp[color];
+                return proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],this.old_sp[this.fix1],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
+            });
             return sp;
         },
         fix2_sp()
         {
             let fixed_sp = proj.calculate_setpoints_fixed_sum(this.old_sp[this.fix1],this.old_sp[this.fix2],this.fix2_sum,this.current_barycentric[this.fix1],this.current_barycentric[this.fix2],this.target_barycentric[this.fix1],this.target_barycentric[this.fix2]);
-            let sp = [];
-            for(let color in this.comp_colors)
+            let sp = this.comp_colors.map((_,color)=>
             {
                 if(color == this.fix1)
-                {
-                    sp.push(fixed_sp[0]);
-                    continue;
-                }
+                    return fixed_sp[0];
                 if(color == this.fix2)
-                {
-                    sp.push(fixed_sp[1]);
-                    continue;
-                }
-                sp.push(proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]));
-            }
+                    return fixed_sp[1];
+                return proj.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
+            });
             return sp;
         }
     },
@@ -111,7 +100,7 @@ export var setpoints =
                     </template>
                 </v-card-subtitle>
                 <v-card-text v-if="comp_colors.length >= 2" class="d-flex flex-column justify-center">
-                    <v-number-input onbeforeinput="event.stopPropagation()" v-for="(color,idx) in comp_colors" width="" density="compact" :label="color.name" v-model="old_sp[idx]" :precision="4"></v-number-input>
+                    <v-number-input onbeforeinput="event.stopPropagation()" v-for="(color,idx) in comp_colors" width="" density="compact" :label="color.name" v-model="old_sp[idx]" :min="0" :precision="4"></v-number-input>
                 </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
@@ -128,7 +117,7 @@ export var setpoints =
                 <v-card-text class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Addend Component 1" :items="comp_colors_select" v-model="fix1"></v-select>
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Addend Component 2" :items="comp_colors_select" v-model="fix2"></v-select>
-                    <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" label="Fixed Sum" v-model="fix2_sum" :precision="4"></v-number-input>
+                    <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" label="Fixed Sum" v-model="fix2_sum" :min="0" :precision="4"></v-number-input>
                     <v-label v-if="fix1 == fix2">Selected Components Must Be Different</v-label>
                     <template v-else>
                         <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" width="" density="compact" :label="color.name" v-model="fix2_sp[idx]" :precision="4" disabled></v-number-input>

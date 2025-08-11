@@ -77,7 +77,7 @@ export var accuracy_check =
         {
             let cur_proj = this.project_onto_hull(this.current,this.comp_colors);
             let predict_proj = proj.predict_barycentric(this.old_sp,this.new_sp,this.current_barycentric);
-            let hull = this.comp_colors.map((col) => {return col.XYZ});
+            let hull = this.comp_colors.map((col) => col.XYZ);
             predict_proj = proj.get_composite_from_barycentric(hull,predict_proj);
             let predict = vec3.clone(this.current.XYZ);
             let moved_comps = hull.filter((h,i)=>this.old_sp[i]!=this.new_sp[i]);
@@ -241,8 +241,8 @@ export var accuracy_check =
                 <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
             </div>
             <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :precision="4" v-model="old_sp[idx]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :precision="4" v-model="new_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
             </div>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
             <div class="d-flex ga-4">
