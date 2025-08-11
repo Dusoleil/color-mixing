@@ -129,7 +129,7 @@ export var plot =
             let origin = [(min_x+max_x)/2,(min_y+max_y)/2,(min_z+max_z)/2];
             let zoom_factor = this.linear ? 1.5 : 1.1;
             let diameter = Math.max(Math.max((max_x-min_x)*zoom_factor,(max_y-min_y)*zoom_factor),(max_z-min_z)*zoom_factor) + 10;
-            this.pivot.position.set(origin[0],origin[1],origin[2]);
+            this.pivot.position.set(...origin);
             this.camera.position.set(0,0,Math.max(15,((max_z-min_z)+diameter)/2));
             return [origin,diameter];
         },
@@ -153,16 +153,16 @@ export var plot =
             {
                 let vertices = [];
                 if(h.length == 2 || h.length == 3)
-                    vertices = h.map((p)=>new THREE.Vector3(p[0],p[1],p[2]));
+                    vertices = h.map((p)=>new THREE.Vector3(...p));
                 if(h.length == 3)
-                    vertices.push(new THREE.Vector3(h[0][0],h[0][1],h[0][2]));
+                    vertices.push(new THREE.Vector3(...h[0]));
                 if(h.length > 3)
                 {
-                    vertices = h.map((p)=>new THREE.Vector3(p[0],p[1],p[2]));
-                    vertices.push(new THREE.Vector3(h[0][0],h[0][1],h[0][2]));
-                    vertices.push(new THREE.Vector3(h[2][0],h[2][1],h[2][2]));
-                    vertices.push(new THREE.Vector3(h[3][0],h[3][1],h[3][2]));
-                    vertices.push(new THREE.Vector3(h[1][0],h[1][1],h[1][2]));
+                    vertices = h.map((p)=>new THREE.Vector3(...p));
+                    vertices.push(new THREE.Vector3(...h[0]));
+                    vertices.push(new THREE.Vector3(...h[2]));
+                    vertices.push(new THREE.Vector3(...h[3]));
+                    vertices.push(new THREE.Vector3(...h[1]));
                 }
                 const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
                 const material = new THREE.LineBasicMaterial({color:0x000000});
@@ -178,7 +178,7 @@ export var plot =
         plot_point(p)
         {
             const vertices = [];
-            vertices.push(new THREE.Vector3(p[0],p[1],p[2]));
+            vertices.push(new THREE.Vector3(...p));
             const geometry = new THREE.BufferGeometry().setFromPoints(vertices);
             const material = new THREE.PointsMaterial({color:p[3], size:10.0, sizeAttenuation:false});
             const points = new THREE.Points(geometry, material);
@@ -186,7 +186,7 @@ export var plot =
             const text_geometry = new TextGeometry(p[4],{font:font,size:1.5,depth:0.2});
             const text_material = new THREE.MeshBasicMaterial({color: 0x222222});
             const text = new THREE.Mesh(text_geometry,text_material);
-            let tp = new THREE.Vector3(p[0],p[1],p[2]);
+            let tp = new THREE.Vector3(...p);
             const leading = 1.6;
             adjust_text: while(true)
             {
@@ -232,7 +232,7 @@ export var plot =
                 new THREE.MeshBasicMaterial({color: 0xbbbbbb , side:THREE.DoubleSide})
             ];
             let background_box = new THREE.Mesh(cube_geometry,cube_materials);
-            background_box.position.set(origin[0],origin[1],origin[2]);
+            background_box.position.set(...origin);
             background_box.renderOrder = -2;
             this.$scene.add(background_box);
         },
@@ -241,7 +241,7 @@ export var plot =
             if(webgl_support)
                 diameter -= 0.5;
             const radius = (diameter / 2);
-            const vorigin = new THREE.Vector3(origin[0],origin[1],origin[2]);
+            const vorigin = new THREE.Vector3(...origin);
             const corner = vorigin.clone().sub(new THREE.Vector3(radius,radius,radius));
             const edge_x = corner.clone().add(new THREE.Vector3(diameter,0,0));
             const edge_y = corner.clone().add(new THREE.Vector3(0,diameter,0));

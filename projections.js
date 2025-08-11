@@ -104,15 +104,15 @@ export function barycentric_triangle(p,t1,t2,t3)
     {
         let projection = vec3.create();
         vec3.transformQuat(projection,p,rotation);
-        projection = vec2.fromValues(projection[0],projection[1]);
+        projection = vec2.fromValues(...projection);
         return projection;
     }
     let p_2d = project_xy(p);
     let t1_2d = project_xy(t1);
     let t2_2d = project_xy(t2);
     let t3_2d = project_xy(t3);
-    let lin_eq_left = mat3.fromValues(t1_2d[0],t1_2d[1],1,t2_2d[0],t2_2d[1],1,t3_2d[0],t3_2d[1],1);
-    let lin_eq_right = vec3.fromValues(p_2d[0],p_2d[1],1);
+    let lin_eq_left = mat3.fromValues(...t1_2d,1,...t2_2d,1,...t3_2d,1);
+    let lin_eq_right = vec3.fromValues(...p_2d,1);
     let inv_left = mat3.create();
     mat3.invert(inv_left,lin_eq_left);
     let solution = vec3.create();
@@ -183,8 +183,8 @@ export function point_to_triangle_distance(p,t1,t2,t3)
 
 export function barycentric_tetrahedron(p,t1,t2,t3,t4)
 {
-    let lin_eq_left = mat4.fromValues(t1[0],t1[1],t1[2],1,t2[0],t2[1],t2[2],1,t3[0],t3[1],t3[2],1,t4[0],t4[1],t4[2],1);
-    let lin_eq_right = vec4.fromValues(p[0],p[1],p[2],1);
+    let lin_eq_left = mat4.fromValues(...t1,1,...t2,1,...t3,1,...t4,1);
+    let lin_eq_right = vec4.fromValues(...p,1);
     let inv_left = mat4.create();
     mat4.invert(inv_left,lin_eq_left);
     let solution = vec4.create();
