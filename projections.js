@@ -299,6 +299,42 @@ export function rad_to_deg(t)
     return t * (180/Math.PI);
 }
 
+export function project_onto_hull(p,h)
+{
+    if(h.length == 1)
+        return h[0];
+    if(h.length == 2)
+        return project_onto_line_segment(p,h[0],h[1]);
+    if(h.length == 3)
+        return project_onto_triangle(p,h[0],h[1],h[2]);
+    if(h.length >= 4)
+        return project_onto_tetrahedron(p,h[0],h[1],h[2],h[3]);
+}
+
+export function barycentric_hull(p,h)
+{
+    if(h.length == 1)
+        return barycentric_point(p,h[0]);
+    if(h.length == 2)
+        return barycentric_line(p,h[0],h[1]);
+    if(h.length == 3)
+        return barycentric_triangle(p,h[0],h[1],h[2]);
+    if(h.length >= 4)
+        return barycentric_tetrahedron(p,h[0],h[1],h[2],h[3]);
+}
+
+export function barycentric_hull_bounded(p,h)
+{
+    if(h.length == 1)
+        return barycentric_point(p,h[0]);
+    if(h.length == 2)
+        return barycentric_line_bounded(p,h[0],h[1]);
+    if(h.length == 3)
+        return barycentric_triangle_bounded(p,h[0],h[1],h[2]);
+    if(h.length >= 4)
+        return barycentric_tetrahedron_bounded(p,h[0],h[1],h[2],h[3]);
+}
+
 export function calculate_setpoint(old_sp,old_anchor,new_anchor,old_bary,new_bary,old_anchor_bary,new_anchor_bary)
 {
     if(new_bary <= 0) return 0;

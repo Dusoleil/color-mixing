@@ -71,14 +71,7 @@ export var setpoints =
     {
         barycentric_coords(p,h)
         {
-            if(h.length == 1)
-                return proj.barycentric_point(p.XYZ,h[0].XYZ);
-            if(h.length == 2)
-                return proj.barycentric_line_bounded(p.XYZ,h[0].XYZ,h[1].XYZ);
-            if(h.length == 3)
-                return proj.barycentric_triangle_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
-            if(h.length >= 4)
-                return proj.barycentric_tetrahedron_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
+            return proj.barycentric_hull_bounded(p.XYZ,h.map((c)=>c.XYZ));
         }
     },
     template:/*html*/`

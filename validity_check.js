@@ -46,34 +46,12 @@ export var validity_check =
     {
         closest_to_hull(p,h)
         {
-            if(h.length == 1)
-                return h[0];
-            if(h.length == 2)
-            {
-                let projection = proj.project_onto_line_segment(p.XYZ,h[0].XYZ,h[1].XYZ);
-                return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
-            }
-            if(h.length == 3)
-            {
-                let projection = proj.project_onto_triangle(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
-                return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
-            }
-            if(h.length >= 4)
-            {
-                let projection = proj.project_onto_tetrahedron(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
-                return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
-            }
+            let projection = proj.project_onto_hull(p.XYZ,h.map((c)=>c.XYZ));
+            return Color.from_xyz(`Closest Possible to ${p.name}`,projection);
         },
         barycentric_coords(p,h)
         {
-            if(h.length == 1)
-                return proj.barycentric_point(p.XYZ,h[0].XYZ);
-            if(h.length == 2)
-                return proj.barycentric_line_bounded(p.XYZ,h[0].XYZ,h[1].XYZ);
-            if(h.length == 3)
-                return proj.barycentric_triangle_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ);
-            if(h.length >= 4)
-                return proj.barycentric_tetrahedron_bounded(p.XYZ,h[0].XYZ,h[1].XYZ,h[2].XYZ,h[3].XYZ);
+            return proj.barycentric_hull_bounded(p.XYZ,h.map((c)=>c.XYZ));
         }
     },
     components:
