@@ -31,7 +31,7 @@ self.addEventListener("fetch", (e) =>
 {
     if (e.request.mode === "navigate")
     {
-        e.respondWith(caches.match("/"));
+        e.respondWith(caches.match("./"));
         return;
     }
     e.respondWith((async () =>
