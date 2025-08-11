@@ -23,12 +23,15 @@
                         <validity-check></validity-check>
                     </v-window-item>
                     <v-window-item :value="2">
-                        <try-setpoints></try-setpoints>
+                        <ratios>></ratios>
                     </v-window-item>
                     <v-window-item :value="3">
-                        <setpoints></setpoints>
+                        <try-setpoints></try-setpoints>
                     </v-window-item>
                     <v-window-item :value="4">
+                        <setpoints></setpoints>
+                    </v-window-item>
+                    <v-window-item :value="5">
                         <accuracy-check></accuracy-check>
                     </v-window-item>
                     <v-fab key="" :app="true" location="right bottom" :color="open ? '' : 'primary'" icon elevation="10" :size="nav_main_size">
@@ -37,14 +40,17 @@
                             <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="toggle_theme">
                                 <v-icon>{{$vuetify.theme.name == "light" ? 'mdi-white-balance-sunny' : 'mdi-weather-night'}}</v-icon>
                             </v-btn>
-                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=4">
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=5">
                                 <v-icon>mdi-check-decagram</v-icon>
                             </v-btn>
-                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=3">
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=4">
                                 <v-icon>mdi-creation</v-icon>
                             </v-btn>
-                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=2">
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=3">
                                 <v-icon>mdi-weight</v-icon>
+                            </v-btn>
+                            <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=2">
+                                <v-icon>mdi-fraction-one-half</v-icon>
                             </v-btn>
                             <v-btn key="" color="secondary" icon :size="nav_dial_size" @click="page=1">
                                 <v-icon>mdi-chart-scatter-plot</v-icon>

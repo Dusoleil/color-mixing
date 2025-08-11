@@ -10,6 +10,7 @@ import {accuracy_check} from "accuracy_check"
 import {validity_check} from "validity_check"
 import {setpoints} from "setpoints"
 import {try_setpoints} from "try_setpoints"
+import {ratios} from "ratios"
 
 const store =
 {
@@ -202,7 +203,8 @@ const app = createApp(
         "accuracy-check":accuracy_check,
         "validity-check":validity_check,
         "setpoints":setpoints,
-        "try-setpoints":try_setpoints
+        "try-setpoints":try_setpoints,
+        "ratios":ratios
     }
 });
 

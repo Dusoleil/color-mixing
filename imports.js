@@ -21,7 +21,8 @@ const import_map =
         plot:"./plot.js",
         setpoints:"./setpoints.js",
         predictions:"./predictions.js",
-        try_setpoints:"./try_setpoints.js"
+        try_setpoints:"./try_setpoints.js",
+        ratios:"./ratios.js"
     }
 }
 

@@ -1,6 +1,5 @@
 import * as proj from "projections"
 import * as predict from "predictions"
-import {vec3} from "glMatrix"
 
 export var setpoints =
 {
@@ -103,7 +102,7 @@ export var setpoints =
                 <v-card-text class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Fixed Component" :items="comp_colors_select" v-model="fix1"></v-select>
                     <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" width="" density="compact" :label="color.name" v-model="fix1_sp[idx]" :precision="4" disabled></v-number-input>
-                    </v-card-text>
+                </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
                 <v-card-title>New Setpoints</v-card-title>
