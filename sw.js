@@ -1,6 +1,6 @@
 const VERSION = "0.1.0";
 const CACHE_NAME = `color-mixing-${VERSION}`;
-const APP_STATIC_RESOURCES = ["/","/index.html"];
+const APP_STATIC_RESOURCES = ["./","./index.html"];
 
 self.addEventListener("install", (e) =>
 {
