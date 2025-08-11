@@ -131,6 +131,10 @@ export var accuracy_check =
         actual_magnitude()
         {
             return vec3.distance(this.current.XYZ,this.color_after_move.XYZ);
+        },
+        mobile_num_input()
+        {
+            return this.$vuetify.display.mobile ? 'hidden' : 'stacked';
         }
     },
     watch:
@@ -186,16 +190,16 @@ export var accuracy_check =
     },
     template:/*html*/`
         <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
-        <v-card title="One Component Trajectory Accuracy" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
+        <v-card title="Single Trajectory Accuracy" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
             <div class="d-flex ga-4">
                 <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors_select" v-model="moving_comp"></v-select>
-                <v-switch prepend-icon="mdi-minus" append-icon="mdi-plus" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
+                <v-switch :prepend-icon="$vuetify.display.mobile?'':'mdi-minus'" :false-icon="$vuetify.display.mobile?'mdi-minus':''" :append-icon="$vuetify.display.mobile?'':'mdi-plus'" :true-icon="$vuetify.display.mobile?'mdi-plus':''" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
             </div>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
             <div class="d-flex ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
             </div>
             <v-btn color="primary" class="mb-4" @click="load_into_current">
                 Load This Color Into Current
@@ -242,9 +246,9 @@ export var accuracy_check =
             </div>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
             <div class="d-flex ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
             </div>
             <v-btn color="primary" class="mb-4" @click="load_into_current">
                 Load This Color Into Current
