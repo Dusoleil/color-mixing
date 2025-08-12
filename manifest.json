@@ -2,7 +2,7 @@
     "name":"Color Mixing",
     "short_name":"Color Mixing",
     "description":"Analyze relationships between colors and mix them.",
-    "start_url":"/",
+    "start_url":"./",
     "display":"standalone",
     "theme_color":"#5E4545",
     "background_color":"#221E1C",
