@@ -15,10 +15,6 @@ export var try_setpoints =
     },
     computed:
     {
-        target()
-        {
-            return this.$store.state.target_color;
-        },
         current()
         {
             return this.$store.state.current_color;
@@ -38,7 +34,7 @@ export var try_setpoints =
     },
     template:/*html*/`
         <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
-        <v-card v-if="target && current" title="Try Setpoints" elevation="10" class="mb-4" :style="{'max-width':'max-content'}">
+        <v-card v-if="current" title="Try Setpoints" elevation="10" class="mb-4" :style="{'max-width':'max-content'}">
             <v-card-subtitle>
                 <template v-if="comp_colors.length <= 1">
                     Not Enough Component Colors to Work With
@@ -53,8 +49,8 @@ export var try_setpoints =
                     Four Component Colors
                 </template>
             </v-card-subtitle>
-            <v-card-text>
-            <div v-if="comp_colors.length >= 2" class="d-flex justify-center ga-4">
+            <v-card-text v-if="comp_colors.length >= 2">
+            <div class="d-flex justify-center ga-4">
                 <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
                 <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
             </div>
