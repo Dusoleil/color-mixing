@@ -31,24 +31,22 @@ export var ratios =
             let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
             let current = this.current.XYZ;
             let target = this.target.XYZ;
+            if(moving_comp_vecs.length == 1)
+            {
+                target = proj.project_onto_line(target,...moving_comp_vecs,current);
+            }
             if(moving_comp_vecs.length == 2)
             {
                 target = proj.project_onto_plane(target,...moving_comp_vecs,current);
             }
             let bary = proj.barycentric_hull(target,[...moving_comp_vecs,current]);
-            let mult = 0;
+            bary = Array.from(bary).slice(0,-1);
             for(let b in bary)
             {
-                if(bary[b] != 0)
-                {
-                    if(mult == 0)
-                    {
-                        mult = Math.abs(1/bary[b]);
-                    }
-                    bary[b] *= mult;
-                }
+                let d = vec3.distance(this.current.XYZ,moving_comps[b].XYZ);
+                bary[b] = bary[b] * d;
             }
-            return Array.from(bary).slice(0,-1).map((b,i)=>{return {'color':moving_comps[i],'ratio':b};});
+            return bary.map((b,i)=>{return {'color':moving_comps[i],'ratio':b};});
         },
         target_direction()
         {
@@ -80,13 +78,6 @@ export var ratios =
             return vec3.distance(this.current.XYZ,this.target.XYZ);
         }
     },
-    methods:
-    {
-        barycentric_coords(p,h)
-        {
-            return proj.barycentric_hull_bounded(p.XYZ,h.map((c)=>c.XYZ));
-        }
-    },
     watch:
     {
         comp_colors()
@@ -99,7 +90,7 @@ export var ratios =
             <v-card elevation="10">
                 <v-card-title>Move Components by Ratio</v-card-title>
                 <v-card-subtitle>One Component Stays Fixed</v-card-subtitle>
-                <v-card-text v-if="comp_colors.length >= 3" class="d-flex flex-column justify-center">
+                <v-card-text v-if="comp_colors.length >= 2" class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Fixed Component" :items="comp_colors_select" v-model="fix1"></v-select>
                     <v-table><tbody>
                         <tr v-for="comp in comp_ratios">
