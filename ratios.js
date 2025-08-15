@@ -29,16 +29,8 @@ export var ratios =
         {
             let moving_comps = this.comp_colors.filter((_,c)=>c!=this.fix1);
             let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
-            let current = this.current.XYZ;
-            let target = this.target.XYZ;
-            let bary = proj.barycentric_hull(target,[...moving_comp_vecs,current]);
-            bary = Array.from(bary).slice(0,-1);
-            for(let b in bary)
-            {
-                let d = vec3.distance(this.current.XYZ,moving_comps[b].XYZ);
-                bary[b] = bary[b] * d;
-            }
-            return bary.map((b,i)=>{return {'color':moving_comps[i],'ratio':b};});
+            let ratios = proj.get_adjustment_ratio(this.current.XYZ,this.target.XYZ,moving_comp_vecs);
+            return ratios.map((b,i)=>{return {'color':moving_comps[i],'ratio':b};});
         },
         target_direction()
         {

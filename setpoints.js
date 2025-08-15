@@ -63,18 +63,14 @@ export var setpoints =
         {
             let moving_comps = this.comp_colors.filter((_,c)=>c!=this.fix1);
             let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
+            let cur_ratios = proj.get_adjustment_ratio(this.comp_colors[this.fix1].XYZ,this.current.XYZ,moving_comp_vecs);
+            let adj_ratios = proj.get_adjustment_ratio(this.current.XYZ,this.target.XYZ,moving_comp_vecs);
             let moving_sps = this.old_sp.filter((_,s)=>s!=this.fix1);
-            let current = this.current.XYZ;
-            let target = this.target.XYZ;
-            let anchor = this.comp_colors[this.fix1].XYZ;
-            let bary = proj.barycentric_hull(target,[...moving_comp_vecs,current]);
-            let scale = bary.at(-1);
-            bary = Array.from(bary).slice(0,-1);
-            let bary2 = proj.barycentric_hull(current,[...moving_comp_vecs,anchor]);
-            bary2 = Array.from(bary2).slice(0,-1);
+            let scale = proj.barycentric_hull(this.target.XYZ,[...moving_comp_vecs,this.current.XYZ]).at(-1);
+            scale == 0 ? scale = 1 : scale = 1/Math.abs(scale);
             let sp = moving_comps.map((_,comp)=>
             {
-                return predict.calculate_setpoint_by_ratio(anchor,moving_comp_vecs[comp],current,moving_sps[comp],bary2[comp],bary[comp],scale);
+                return predict.calculate_setpoint_by_ratio(moving_sps[comp],cur_ratios[comp],adj_ratios[comp],scale);
             });
             sp.splice(this.fix1,0,this.old_sp[this.fix1]);
             return sp;

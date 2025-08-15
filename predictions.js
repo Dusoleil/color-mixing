@@ -2,19 +2,13 @@ import {Color} from "color"
 import * as proj from "projections"
 import {glMatrix,vec2,vec3,vec4,mat2,mat3,mat4} from "glMatrix"
 
-export function calculate_setpoint_by_ratio(anc_col,comp_col,cur_col,comp_sp,bary_cur,bary_adj,scale)
+export function calculate_setpoint_by_ratio(comp_sp,bary_cur,bary_adj,scale)
 {
     if(comp_sp == 0) return bary_adj;
-    let d1 = vec3.distance(anc_col,comp_col);
-    if(d1 == 0) return 0;
-    if(bary_cur == 0) return bary_adj;
-    d1 *= bary_cur;
-    d1 /= comp_sp;
-    let d2 = vec3.distance(cur_col,comp_col);
-    d2 *= bary_adj;
-    let sp = d2 / Math.abs(d1);
-    if(scale != 0)
-        sp /= Math.abs(scale);
+    let d1 = bary_cur / comp_sp;
+    if(d1 == 0) return bary_adj;
+    let sp = bary_adj / Math.abs(d1);
+    sp *= scale;
     return comp_sp + sp;
 }
 

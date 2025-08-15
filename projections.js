@@ -346,3 +346,15 @@ export function get_composite_from_barycentric(components,barycentric)
     }
     return composite;
 }
+
+export function get_adjustment_ratio(current,target,moving_comps)
+{
+    let bary = barycentric_hull(target,[...moving_comps,current]);
+    bary = Array.from(bary).slice(0,-1);
+    for(let b in bary)
+    {
+        let d = vec3.distance(current,moving_comps[b]);
+        bary[b] = bary[b] * d;
+    }
+    return bary;
+}
