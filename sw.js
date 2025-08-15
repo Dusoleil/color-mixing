@@ -1,4 +1,4 @@
-const VERSION = "0.1.1";
+const VERSION = "0.2.0";
 const CACHE_NAME = `color-mixing-${VERSION}`;
 const APP_STATIC_RESOURCES = ["./","./index.html"];
 
