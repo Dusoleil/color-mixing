@@ -87,6 +87,32 @@ export var accuracy_check =
         {
             return vec3.distance(this.current.XYZ,this.prediction_by_barycentric.XYZ);
         },
+        prediction_by_ratio()
+        {
+            let n = [...this.new_sp];
+            if(n.every((p,i)=>p!=this.old_sp[i]||(p==0)))
+                n[0] = this.old_sp[0];
+            return predict.predict_by_ratio(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,n);
+        },
+        ratio_delta_e()
+        {
+            return vec3.distance(this.prediction_by_ratio.Lab,this.target.Lab);
+        },
+        ratio_trajectory()
+        {
+            let a = vec3.create();
+            vec3.sub(a,this.prediction_by_ratio.XYZ,this.current.XYZ);
+            vec3.normalize(a,a);
+            return a;
+        },
+        ratio_angle()
+        {
+            return vec3.angle(this.ratio_trajectory,this.actual_move);
+        },
+        ratio_magnitude()
+        {
+            return vec3.distance(this.current.XYZ,this.prediction_by_ratio.XYZ);
+        },
         actual_magnitude()
         {
             return vec3.distance(this.current.XYZ,this.color_after_move.XYZ);
@@ -165,6 +191,71 @@ export var accuracy_check =
                 <tr>
                     <td>Accuracy &Theta; (Deg):</td>
                     <td colspan="3">{{rad_to_deg(angle).toFixed(4)}}</td>
+                </tr>
+            </tbody></v-table>
+        </v-card-text></v-card>
+        <v-card v-if="target && current" title="Ratio Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+            <div class="d-flex justify-center ga-4">
+                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
+                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
+            </div>
+            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
+            </div>
+            <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
+            <div class="d-flex ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
+            </div>
+            <v-btn color="primary" class="mb-4" @click="load_into_current">
+                Load This Color Into Current
+            </v-btn>
+            <v-table v-if="target && current && comp_colors.length >= 2"><tbody>
+                <tr>
+                    <td>Old &Delta;E:</td>
+                    <td colspan="3">{{old_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Predicted &Delta;E:</td>
+                    <td colspan="3">{{ratio_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>New &Delta;E:</td>
+                    <td colspan="3">{{new_delta_e.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Expected &Delta;:</td>
+                    <td>{{ratio_trajectory[0].toFixed(2)}}</td>
+                    <td>{{ratio_trajectory[1].toFixed(2)}}</td>
+                    <td>{{ratio_trajectory[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Actual &Delta;:</td>
+                    <td>{{actual_move[0].toFixed(2)}}</td>
+                    <td>{{actual_move[1].toFixed(2)}}</td>
+                    <td>{{actual_move[2].toFixed(2)}}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy &Theta; (Rad):</td>
+                    <td colspan="3">{{ratio_angle.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Accuracy &Theta; (Deg):</td>
+                    <td colspan="3">{{rad_to_deg(ratio_angle).toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Expected Magnitude:</td>
+                    <td colspan="3">{{ratio_magnitude.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Actual Magnitude:</td>
+                    <td colspan="3">{{actual_magnitude.toFixed(4)}}</td>
+                </tr>
+                <tr>
+                    <td>Magnitude Accuracy:</td>
+                    <td colspan="3">{{(Math.abs(actual_magnitude-ratio_magnitude)).toFixed(4)}}</td>
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
