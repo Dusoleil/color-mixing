@@ -58,6 +58,26 @@ export var setpoints =
                 return predict.calculate_setpoint(this.old_sp[color],this.old_sp[this.fix1],fixed_sp[0],this.current_barycentric[color],this.target_barycentric[color],this.current_barycentric[this.fix1],this.target_barycentric[this.fix1]);
             });
             return sp;
+        },
+        fix1_sp_ratios()
+        {
+            let moving_comps = this.comp_colors.filter((_,c)=>c!=this.fix1);
+            let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
+            let moving_sps = this.old_sp.filter((_,s)=>s!=this.fix1);
+            let current = this.current.XYZ;
+            let target = this.target.XYZ;
+            let anchor = this.comp_colors[this.fix1].XYZ;
+            let bary = proj.barycentric_hull(target,[...moving_comp_vecs,current]);
+            let scale = bary.at(-1);
+            bary = Array.from(bary).slice(0,-1);
+            let bary2 = proj.barycentric_hull(current,[...moving_comp_vecs,anchor]);
+            bary2 = Array.from(bary2).slice(0,-1);
+            let sp = moving_comps.map((_,comp)=>
+            {
+                return predict.calculate_setpoint_by_ratio(anchor,moving_comp_vecs[comp],current,moving_sps[comp],bary2[comp],bary[comp],scale);
+            });
+            sp.splice(this.fix1,0,this.old_sp[this.fix1]);
+            return sp;
         }
     },
     watch:
@@ -97,7 +117,15 @@ export var setpoints =
                 </v-card-text>
             </v-card>
             <v-card v-if="comp_colors.length >= 2" elevation="10">
-                <v-card-title>New Setpoints</v-card-title>
+                <v-card-title>New Setpoints (Method 1)</v-card-title>
+                <v-card-subtitle>One Component Stays Fixed</v-card-subtitle>
+                <v-card-text class="d-flex flex-column justify-center">
+                    <v-select :style="{'min-width':'14em'}" density="compact" label="Fixed Component" :items="comp_colors_select" v-model="fix1"></v-select>
+                    <v-number-input v-for="(color,idx) in comp_colors" control-variant="hidden" width="" density="compact" :label="color.name" v-model="fix1_sp_ratios[idx]" :precision="4" disabled></v-number-input>
+                </v-card-text>
+            </v-card>
+            <v-card v-if="comp_colors.length >= 2" elevation="10">
+                <v-card-title>New Setpoints (Method 2)</v-card-title>
                 <v-card-subtitle>One Component Stays Fixed</v-card-subtitle>
                 <v-card-text class="d-flex flex-column justify-center">
                     <v-select :style="{'min-width':'14em'}" density="compact" label="Fixed Component" :items="comp_colors_select" v-model="fix1"></v-select>

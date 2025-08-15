@@ -31,14 +31,6 @@ export var ratios =
             let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
             let current = this.current.XYZ;
             let target = this.target.XYZ;
-            if(moving_comp_vecs.length == 1)
-            {
-                target = proj.project_onto_line(target,...moving_comp_vecs,current);
-            }
-            if(moving_comp_vecs.length == 2)
-            {
-                target = proj.project_onto_plane(target,...moving_comp_vecs,current);
-            }
             let bary = proj.barycentric_hull(target,[...moving_comp_vecs,current]);
             bary = Array.from(bary).slice(0,-1);
             for(let b in bary)
