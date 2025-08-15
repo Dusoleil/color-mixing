@@ -204,7 +204,7 @@ export var accuracy_check =
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
-        <v-card v-if="target && current && comp_colors.length >= 2" title="Ratio Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+        <v-card v-if="target && current && comp_colors.length >= 2" title="Method 1 Prediction Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
             <v-table><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
@@ -252,7 +252,7 @@ export var accuracy_check =
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
-        <v-card v-if="target && current && comp_colors.length >= 2" title="Barycentric Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+        <v-card v-if="target && current && comp_colors.length >= 2" title="Method 2 Prediction Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
             <v-table><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
