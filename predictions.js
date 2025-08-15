@@ -2,14 +2,37 @@ import {Color} from "color"
 import * as proj from "projections"
 import {glMatrix,vec2,vec3,vec4,mat2,mat3,mat4} from "glMatrix"
 
-export function calculate_setpoint_by_ratio(comp_sp,bary_cur,bary_adj,scale)
+export function calculate_setpoint_by_ratio(comp_sp,bary_cur,bary_adj)
 {
     if(comp_sp == 0) return bary_adj;
     let d1 = bary_cur / comp_sp;
     if(d1 == 0) return bary_adj;
     let sp = bary_adj / Math.abs(d1);
-    sp *= scale;
     return comp_sp + sp;
+}
+
+export function predict_by_ratio(current,comp_colors,old_sp,new_sp)
+{
+    let moving_comps = comp_colors.filter((_,c)=>old_sp[c] != new_sp[c]);
+    let anchor = comp_colors.find((_,c)=>old_sp[c] == new_sp[c]);
+    let moving_sp = old_sp.map((_,i)=>{return {'old':old_sp[i],'new':new_sp[i]};});
+    moving_sp = moving_sp.filter((p)=>p.old != p.new);
+    let cur_ratios = proj.get_adjustment_ratio(anchor,current,moving_comps);
+    cur_ratios = cur_ratios.map((r,i)=>r/moving_sp[i].old);
+    moving_sp = moving_sp.map((p)=>p.new-p.old);
+    let adj_ratios = cur_ratios.map((r,i)=>Math.abs(r)*moving_sp[i]);
+    moving_comps = moving_comps.map((c,i)=>{return {'color':c,'magnitude':adj_ratios[i]};});
+    let predict = vec3.clone(current);
+    for(let c of moving_comps)
+    {
+        let part = vec3.clone(c.color);
+        vec3.sub(part,part,current);
+        vec3.normalize(part,part);
+        vec3.scale(part,part,c.magnitude);
+        vec3.add(predict,predict,part);
+    }
+    predict = Color.from_xyz("Predicted Color (Method 1)",predict);
+    return predict;
 }
 
 export function calculate_setpoint(old_sp,old_anchor,new_anchor,old_bary,new_bary,old_anchor_bary,new_anchor_bary)
@@ -120,6 +143,6 @@ export function predict_color_by_barycentric(current,comp_colors,old_sp,new_sp)
             vec3.add(predict,predict,part);
         }
     }
-    predict = Color.from_xyz("Predicted Color",predict);
+    predict = Color.from_xyz("Predicted Color (Method 2)",predict);
     return predict;
 }

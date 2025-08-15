@@ -26,6 +26,21 @@ export var try_setpoints =
         prediction_by_barycentric()
         {
             return predict.predict_color_by_barycentric(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,this.new_sp);
+        },
+        prediction_by_ratios()
+        {
+            let n = [...this.new_sp];
+            if(n.every((p,i)=>p!=this.old_sp[i]||(p==0)))
+                n[0] = this.old_sp[0];
+            return predict.predict_by_ratio(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,n);
+        }
+    },
+    watch:
+    {
+        comp_colors()
+        {
+            this.old_sp = [0,0,0,0];
+            this.new_sp = [0,0,0,0];
         }
     },
     components:
@@ -59,6 +74,7 @@ export var try_setpoints =
                 <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
             </div>
         </v-card-text></v-card>
+        <color-viewer :detail="DETAIL_LEVEL.NO_THETA" v-if="comp_colors.length >= 2" :color="prediction_by_ratios" class="mb-4"></color-viewer>
         <color-viewer :detail="DETAIL_LEVEL.NO_THETA" v-if="comp_colors.length >= 2" :color="prediction_by_barycentric"></color-viewer>
         </div>`
 };
