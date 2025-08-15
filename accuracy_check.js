@@ -148,12 +148,8 @@ export var accuracy_check =
             this.moving_comp = this.comp_colors_select[0].value;
     },
     template:/*html*/`
-        <div class="mx-auto mt-10 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
-        <v-card title="Single Trajectory Accuracy" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
-            <div class="d-flex ga-4">
-                <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors_select" v-model="moving_comp"></v-select>
-                <v-switch :prepend-icon="$vuetify.display.mobile?'':'mdi-minus'" :false-icon="$vuetify.display.mobile?'mdi-minus':''" :append-icon="$vuetify.display.mobile?'':'mdi-plus'" :true-icon="$vuetify.display.mobile?'mdi-plus':''" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
-            </div>
+        <div class="mx-auto mt-4 mb-4 d-flex flex-wrap justify-center ga-4" :style="{'max-width':'85dvw'}">
+        <v-card title="Adjustments" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
             <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
             <div class="d-flex ga-4">
                 <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
@@ -163,6 +159,20 @@ export var accuracy_check =
             <v-btn color="primary" class="mb-4" @click="load_into_current">
                 Load This Color Into Current
             </v-btn>
+            <div class="d-flex justify-center ga-4">
+                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
+                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
+            </div>
+            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
+                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
+            </div>
+        </v-card-text></v-card>
+        <v-card title="Single Trajectory Accuracy" elevation="10" :style="{'max-width':'max-content'}"><v-card-text>
+            <div class="d-flex ga-4">
+                <v-select :style="{'min-width':'14em'}" label="Component Adjusted" :items="comp_colors_select" v-model="moving_comp"></v-select>
+                <v-switch :prepend-icon="$vuetify.display.mobile?'':'mdi-minus'" :false-icon="$vuetify.display.mobile?'mdi-minus':''" :append-icon="$vuetify.display.mobile?'':'mdi-plus'" :true-icon="$vuetify.display.mobile?'mdi-plus':''" v-model="add_or_remove" @click:prepend="add_or_remove = false" @click:append="add_or_remove = true"></v-switch>
+            </div>
             <v-table v-if="target && current && moving_comp"><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
@@ -194,25 +204,8 @@ export var accuracy_check =
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
-        <v-card v-if="target && current" title="Ratio Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
-            <div class="d-flex justify-center ga-4">
-                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
-                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
-            </div>
-            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
-            </div>
-            <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
-            <div class="d-flex ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
-            </div>
-            <v-btn color="primary" class="mb-4" @click="load_into_current">
-                Load This Color Into Current
-            </v-btn>
-            <v-table v-if="target && current && comp_colors.length >= 2"><tbody>
+        <v-card v-if="target && current && comp_colors.length >= 2" title="Ratio Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+            <v-table><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
                     <td colspan="3">{{old_delta_e.toFixed(4)}}</td>
@@ -259,25 +252,8 @@ export var accuracy_check =
                 </tr>
             </tbody></v-table>
         </v-card-text></v-card>
-        <v-card v-if="target && current" title="Barycentric Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
-            <div class="d-flex justify-center ga-4">
-                <v-label text="Old Setpoints" class="mb-2 mx-auto"></v-label>
-                <v-label text="New Setpoints" class="mb-2 mx-auto"></v-label>
-            </div>
-            <div v-for="(color,idx) in comp_colors" class="d-flex justify-center ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="old_sp[idx]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" width="" density="compact" :label="color.name" :min="0" :precision="4" v-model="new_sp[idx]"></v-number-input>
-            </div>
-            <v-label text="&Delta;Lab After Adjustment" class="mb-2"></v-label>
-            <div class="d-flex ga-4">
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;L" :min="-100" :max="100" :step="0.01" :precision="2" v-model="delta_after_move[0]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;a" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[1]"></v-number-input>
-                <v-number-input onbeforeinput="event.stopPropagation()" :control-variant="mobile_num_input" label="&Delta;b" :min="-255" :max="255" :step="0.01" :precision="2" v-model="delta_after_move[2]"></v-number-input>
-            </div>
-            <v-btn color="primary" class="mb-4" @click="load_into_current">
-                Load This Color Into Current
-            </v-btn>
-            <v-table v-if="target && current && comp_colors.length >= 2"><tbody>
+        <v-card v-if="target && current && comp_colors.length >= 2" title="Barycentric Setpoint Accuracy" elevation="10" class="mb-4" :style="{'max-width':'max-content'}"><v-card-text>
+            <v-table><tbody>
                 <tr>
                     <td>Old &Delta;E:</td>
                     <td colspan="3">{{old_delta_e.toFixed(4)}}</td>
