@@ -92,7 +92,7 @@ export var accuracy_check =
             let n = [...this.new_sp];
             if(n.every((p,i)=>p!=this.old_sp[i]||(p==0)))
                 n[0] = this.old_sp[0];
-            return predict.predict_by_ratio(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,n);
+            return predict.predict_color_by_ratio(this.current.XYZ,this.comp_colors.map((c)=>c.XYZ),this.old_sp,n);
         },
         ratio_delta_e()
         {

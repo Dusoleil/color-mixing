@@ -61,17 +61,14 @@ export var setpoints =
         },
         fix1_sp_ratios()
         {
-            let moving_comps = this.comp_colors.filter((_,c)=>c!=this.fix1);
-            let moving_comp_vecs = moving_comps.map((c)=>c.XYZ);
-            let cur_ratios = proj.get_adjustment_ratio(this.comp_colors[this.fix1].XYZ,this.current.XYZ,moving_comp_vecs);
-            let adj_ratios = proj.get_adjustment_ratio(this.current.XYZ,this.target.XYZ,moving_comp_vecs);
+            let current = this.current.XYZ;
+            let target = this.target.XYZ;
+            let anchor = this.comp_colors.find((_,c)=>c==this.fix1).XYZ;
+            let moving_comps = this.comp_colors.filter((_,c)=>c!=this.fix1).map((c)=>c.XYZ);
             let moving_sps = this.old_sp.filter((_,s)=>s!=this.fix1);
-            let sp = moving_comps.map((_,comp)=>
-            {
-                return predict.calculate_setpoint_by_ratio(moving_sps[comp],cur_ratios[comp],adj_ratios[comp]);
-            });
-            sp.splice(this.fix1,0,this.old_sp[this.fix1]);
-            return sp;
+            let new_sp = predict.calculate_setpoints_by_ratio(current,target,anchor,moving_comps,moving_sps);
+            new_sp.splice(this.fix1,0,this.old_sp[this.fix1]);
+            return new_sp;
         }
     },
     watch:
